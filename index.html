@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>FOLIO</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&family=DM+Serif+Display&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/base.css">
+<link rel="stylesheet" href="css/components.css">
+<link rel="stylesheet" href="css/screens.css">
+</head>
+<body>
+
+<!-- SPLASH -->
+<div id="splash">
+  <div class="spl-mark">
+    <svg viewBox="0 0 24 24" fill="none" width="36" height="36">
+      <defs><linearGradient id="sg" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#f5dfa0"/><stop offset="100%" stop-color="#c9a84c"/></linearGradient></defs>
+      <polyline points="2,17 9,10 13,14 22,5" stroke="url(#sg)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+      <polyline points="16,5 22,5 22,11" stroke="url(#sg)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+  </div>
+  <div class="spl-name">FOLIO</div>
+  <div class="spl-sub">AI-Powered Portfolio Tracker</div>
+  <div class="spl-bar"><div class="spl-prog"></div></div>
+</div>
+
+<!-- API SETUP -->
+<div id="apiSetup">
+  <div class="sc-card">
+    <div class="sc-icon">🔑</div>
+    <div class="sc-ttl2">Gemini API キー</div>
+    <div class="sc-sub">スクリーンショットのAI解析に<br>Gemini APIを使用します。</div>
+    <div class="sc-feats">
+      <div class="sc-feat"><div class="sc-feat-ico">🤖</div>画像から金額・日付を自動抽出</div>
+      <div class="sc-feat"><div class="sc-feat-ico">📊</div>AIレポート・配分アドバイス生成</div>
+      <div class="sc-feat"><div class="sc-feat-ico">🔒</div>キーは端末内のみに保存（サーバー送信なし）</div>
+    </div>
+    <div class="f-lbl">APIキーを入力</div>
+    <input class="f-inp" type="password" id="apiKeySetupInp" placeholder="AIzaSy...">
+    <div class="f-hint">
+      無料で取得: <a href="https://aistudio.google.com/app/apikey" target="_blank">aistudio.google.com</a><br>
+      Gemini 1.5 Flash（無料枠: 15回/分 / 1500回/日）を使用します
+    </div>
+    <button class="btn-gold" onclick="saveApiKey()">設定して開始する</button>
+    <button class="btn-skip" onclick="skipApiKey()">スキップ（手動入力のみで使用）</button>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="app">
+  <div class="topbar">
+    <div class="tb-brand">
+      <div class="tb-mark">
+        <svg viewBox="0 0 24 24" fill="none" width="15" height="15">
+          <defs><linearGradient id="tg" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#e8c97a"/><stop offset="100%" stop-color="#c9a84c"/></linearGradient></defs>
+          <polyline points="2,17 9,10 13,14 22,5" stroke="url(#tg)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+          <polyline points="16,5 22,5 22,11" stroke="url(#tg)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <div class="tb-name">FOLIO</div>
+    </div>
+    <div class="tb-r">
+      <div class="live-badge"><div class="live-dot"></div>LIVE</div>
+      <div class="tb-clock" id="clock"></div>
+      <div class="tb-total" id="tbTotal"></div>
+      <button class="icon-btn" onclick="navTo('settings')">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- HOME -->
+  <div class="screen active" id="sc-home" style="padding:14px;">
+    <div id="homeSummary" style="display:none;">
+      <div class="hero-card" onclick="navTo('dash')">
+        <div class="h-eye"><span class="h-lbl">TOTAL PORTFOLIO</span><span class="h-date" id="heroDate">-</span></div>
+        <div class="h-total" id="heroTotal">-</div>
+        <div class="h-diff neu" id="heroDiff">初月データ</div>
+        <div class="h-spark"><canvas id="homeSparkline"></canvas></div>
+        <div id="heroGoal" style="display:none;" class="h-goal">
+          <div class="hg-row"><span class="hg-lbl">🎯 GOAL <span id="hgAmt">-</span></span><span class="hg-pct" id="hgPct">-%</span></div>
+          <div class="hg-bar"><div class="hg-fill" id="hgFill" style="width:0%"></div></div>
+          <div class="hg-remain" id="hgRemain"></div>
+        </div>
+      </div>
+      <div class="metric-strip" id="metricStrip"></div>
+    </div>
+    <div id="emptyState">
+      <div class="empty-state">
+        <svg viewBox="0 0 160 80" fill="none" width="140" height="70" style="margin-bottom:18px;opacity:.45;">
+          <path d="M8,68 L32,50 L56,55 L80,34 L104,38 L128,18 L152,12" stroke="rgba(201,168,76,.25)" stroke-width="2" stroke-linecap="round"/>
+          <circle cx="152" cy="12" r="4" fill="rgba(201,168,76,.3)"/>
+        </svg>
+        <div class="empty-ttl">資産データなし</div>
+        <div class="empty-sub">スクリーンショットを追加すると<br>Gemini AIが金額・日付を自動で読み取ります</div>
+        <button class="empty-cta" onclick="document.getElementById('fileInput').click()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="17" height="17"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21,15 16,10 5,21"/></svg>
+          スクリーンショットを追加
+        </button>
+      </div>
+    </div>
+    <div>
+      <div class="add-lbl">データを追加</div>
+      <div class="upload-card" onclick="document.getElementById('fileInput').click()">
+        <input type="file" id="fileInput" accept="image/*" multiple style="display:none;">
+        <div class="uc-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#c9a84c" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="21" height="21"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21,15 16,10 5,21"/></svg>
+        </div>
+        <div style="flex:1;"><div class="uc-ttl">スクリーンショットを追加</div><div class="uc-sub">複数枚対応 · Gemini AIが自動解析</div></div>
+        <div class="uc-badge" id="ucBadge">AI</div>
+      </div>
+      <div class="thumb-row" id="thumbList"></div>
+      <div class="act-row">
+        <button class="btn-p" id="analyzeBtn" onclick="startAnalysis()" disabled>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="15" height="15"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          Gemini で解析
+        </button>
+        <button class="btn-s" onclick="openManualModal(null)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>手動入力
+        </button>
+        <button class="btn-g" onclick="loadSample()">サンプル</button>
+      </div>
+      <div class="prv-bar">🔒 端末内のみ &nbsp;·&nbsp; 🚫 広告なし &nbsp;·&nbsp; 🤖 Gemini AI</div>
+    </div>
+    <div id="quickNav" style="display:none;margin-top:14px;">
+      <div class="add-lbl">分析メニュー</div>
+      <div class="quick-grid">
+        <div class="qc" onclick="navTo('dash')"><div class="qc-ico">📈</div><div class="qc-ttl">ダッシュボード</div><div class="qc-sub">チャート・推移</div></div>
+        <div class="qc" onclick="navTo('risk')"><div class="qc-ico">🛡</div><div class="qc-ttl">リスク診断</div><div class="qc-sub">ポートフォリオ評価</div></div>
+        <div class="qc" onclick="navTo('sim')"><div class="qc-ico">🔭</div><div class="qc-ttl">シミュレーション</div><div class="qc-sub">将来予測</div></div>
+        <div class="qc" onclick="navTo('report')"><div class="qc-ico">✦</div><div class="qc-ttl">AIレポート</div><div class="qc-sub">Gemini詳細分析</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- DASHBOARD -->
+  <div class="screen" id="sc-dash">
+    <div class="s-eye">Portfolio</div><div class="s-ttl">ダッシュボード</div>
+    <div class="kpi-strip" id="kpiStrip"></div>
+    <div class="pc-row"><span class="pc-lbl">期間</span>
+      <div style="display:flex;gap:5px;">
+        <button class="pc" onclick="setPeriod(3)">3M</button>
+        <button class="pc" onclick="setPeriod(6)">6M</button>
+        <button class="pc" onclick="setPeriod(12)">1Y</button>
+        <button class="pc active" onclick="setPeriod(0)">ALL</button>
+      </div>
+    </div>
+    <div class="card"><div class="c-ttl">総資産推移</div><div class="c-sub">Total Assets · タップで月次詳細</div><canvas id="lineChart" height="200"></canvas></div>
+    <div class="card"><div class="c-ttl">資産配分</div><div class="c-sub">Latest Allocation</div><canvas id="donutChart" height="200"></canvas></div>
+    <div class="card"><div class="c-ttl">カテゴリ別推移</div><div class="c-sub">Monthly Breakdown</div><canvas id="barChart" height="160"></canvas></div>
+    <div class="card">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;">
+        <div><div class="c-ttl">月次データ</div><div class="c-sub" style="margin-bottom:0;">History</div></div>
+        <button class="btn-csv" onclick="exportCSV()">↓ CSV</button>
+      </div>
+      <div style="margin-top:11px;" class="tbl-wrap"><table id="dataTable"><thead></thead><tbody></tbody></table></div>
+    </div>
+    <div class="card"><div class="c-ttl">インサイト</div><div class="c-sub">Auto Insights</div><div class="insight-grid" id="insightGrid"></div></div>
+  </div>
+
+  <!-- RISK -->
+  <div class="screen" id="sc-risk">
+    <div class="s-eye">Portfolio Health</div><div class="s-ttl">リスク診断</div>
+    <div class="card">
+      <div id="riskHero"></div>
+      <div class="risk-meters" id="riskMeters"></div>
+      <div style="height:1px;background:var(--line);margin:16px 0;"></div>
+      <div class="c-ttl" style="margin-bottom:10px;">改善アドバイス</div>
+      <div class="advice-grid" id="riskAdvice"></div>
+    </div>
+    <div class="card"><div class="c-ttl">ボラティリティ推移</div><div class="c-sub">Monthly Return</div><canvas id="volatilityChart" height="150"></canvas></div>
+  </div>
+
+  <!-- SIMULATION -->
+  <div class="screen" id="sc-sim">
+    <div class="s-eye">Future Projection</div><div class="s-ttl">将来シミュレーション</div>
+    <div class="card">
+      <div class="sim-inputs">
+        <div class="sim-fld"><div class="sim-lbl">毎月の積立（円）</div><input class="sim-inp" type="number" id="simMonthly" value="50000" oninput="runSim()"></div>
+        <div class="sim-fld"><div class="sim-lbl">年間利回り（%）</div><input class="sim-inp" type="number" id="simRate" value="5" step="0.5" oninput="runSim()"></div>
+        <div class="sim-fld"><div class="sim-lbl">期間（年）</div><input class="sim-inp" type="number" id="simYears" value="20" min="1" max="50" oninput="runSim()"></div>
+        <div class="sim-fld"><div class="sim-lbl">目標額（万円）</div><input class="sim-inp" type="number" id="simTarget" value="3000" oninput="runSim()"></div>
+      </div>
+      <div class="sim-results" id="simResults"></div>
+      <canvas id="simChart" height="180"></canvas>
+    </div>
+    <div class="card"><div class="c-ttl">シナリオ比較</div><div class="c-sub">Bear / Neutral / Bull</div><canvas id="scenarioChart" height="180"></canvas></div>
+  </div>
+
+  <!-- REPORT -->
+  <div class="screen" id="sc-report">
+    <div class="s-eye">AI Analysis</div><div class="s-ttl">AI レポート</div>
+    <div class="card">
+      <div class="c-ttl">総合レポート</div><div class="c-sub">Comprehensive Analysis by Gemini</div>
+      <div class="api-warn" id="rptApiWarn">⚠ APIキーが未設定です。設定画面から入力してください。</div>
+      <button class="btn-gen" id="reportBtn" onclick="generateReport()">✦ AI レポートを生成する</button>
+      <div class="rpt-wrap"><div class="rpt-txt ph" id="reportBody">← ボタンを押すとGeminiが詳細レポートを生成します</div></div>
+    </div>
+    <div class="card">
+      <div class="c-ttl">資産配分アドバイス</div><div class="c-sub">Portfolio Allocation · Powered by Gemini</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:11px;margin-bottom:11px;">
+        <div class="sim-fld"><div class="sim-lbl">年齢</div><input class="sim-inp" type="number" id="allocAge" value="35"></div>
+        <div class="sim-fld"><div class="sim-lbl">リスク許容度</div>
+          <select class="sim-inp" id="allocRisk">
+            <option value="low">低（安定）</option>
+            <option value="mid" selected>中（バランス）</option>
+            <option value="high">高（成長）</option>
+          </select>
+        </div>
+      </div>
+      <div class="sim-fld" style="margin-bottom:13px;"><div class="sim-lbl">投資目的</div>
+        <select class="sim-inp" id="allocPurpose">
+          <option value="retire">老後資金</option>
+          <option value="house">住宅購入</option>
+          <option value="edu">教育資金</option>
+          <option value="wealth">資産拡大</option>
+        </select>
+      </div>
+      <button class="btn-gen" id="allocBtn" onclick="generateAlloc()">✦ 最適配分を診断する</button>
+      <div class="rpt-wrap"><div class="rpt-txt ph" id="allocBody">年齢・リスク許容度をもとに最適な資産配分をアドバイスします</div></div>
+    </div>
+  </div>
+
+  <!-- SETTINGS -->
+  <div class="screen" id="sc-settings">
+    <div class="stg-hdr">
+      <button onclick="navTo('home')" style="background:none;border:none;color:var(--gold);font-size:14px;cursor:pointer;font-family:'Noto Sans JP',sans-serif;display:flex;align-items:center;gap:4px;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="15" height="15"><path d="M15 18l-6-6 6-6"/></svg>戻る
+      </button>
+      <div class="stg-ttl">設定</div>
+      <div style="width:56px;"></div>
+    </div>
+    <div class="add-lbl">Gemini API</div>
+    <div class="api-status-bar"><div class="api-dot ng" id="apiDotStg"></div><span id="apiStatusStg">未設定 - AIレポート・スクショ解析が使えません</span></div>
+    <div class="stg-grp">
+      <div class="s-row" onclick="openApiKeyModal()">
+        <div class="s-row-ico" style="background:rgba(201,168,76,.08);">🔑</div>
+        <div class="s-row-body"><div class="s-row-ttl">APIキーを設定・変更</div><div class="s-row-sub" id="apiKeyStgSub">未設定</div></div>
+        <div class="s-row-end">›</div>
+      </div>
+    </div>
+    <div class="add-lbl" style="margin-top:14px;">カテゴリ管理</div>
+    <div id="catListEl"></div>
+    <button class="btn-add-cat" onclick="addCat()">＋ カテゴリを追加</button>
+    <div class="add-lbl" style="margin-top:16px;">目標設定</div>
+    <div class="stg-grp">
+      <div style="padding:13px 15px;">
+        <div class="sim-fld" style="margin-bottom:11px;"><div class="sim-lbl">目標総資産額（万円）</div>
+          <div class="goal-row"><input class="sim-inp" type="number" id="goalAmount" placeholder="例: 3000" oninput="saveGoal()"><span class="goal-unit">万円</span></div>
+        </div>
+        <div class="sim-fld"><div class="sim-lbl">目標達成期限</div><input class="sim-inp" type="month" id="goalDate" oninput="saveGoal()"></div>
+      </div>
+    </div>
+    <div class="add-lbl" style="margin-top:16px;">データ管理</div>
+    <div class="stg-grp">
+      <div class="s-row" onclick="exportJSON()"><div class="s-row-ico">💾</div><div class="s-row-body"><div class="s-row-ttl">JSONバックアップ</div></div><div class="s-row-end">›</div></div>
+      <div class="s-row" onclick="document.getElementById('importFile').click()"><div class="s-row-ico">📂</div><div class="s-row-body"><div class="s-row-ttl">JSONから復元</div></div><div class="s-row-end">›</div></div>
+      <input type="file" id="importFile" accept=".json" style="display:none;" onchange="importJSON(this)">
+      <div class="s-row" onclick="exportCSV()"><div class="s-row-ico">📤</div><div class="s-row-body"><div class="s-row-ttl">CSV エクスポート</div></div><div class="s-row-end">›</div></div>
+      <div class="s-row" onclick="clearAll()"><div class="s-row-ico">🗑</div><div class="s-row-body"><div class="s-row-ttl" style="color:var(--ruby);">全データをリセット</div></div><div class="s-row-end">›</div></div>
+    </div>
+    <div style="text-align:center;padding:10px 0;font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--txt3);letter-spacing:1px;">FOLIO · Powered by Gemini AI · v3.0</div>
+  </div>
+
+  <nav class="bnav">
+    <button class="ni active" id="ni-home" onclick="navTo('home')">
+      <svg viewBox="0 0 24 24"><path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+      <span class="ni-lbl">ホーム</span>
+    </button>
+    <button class="ni" id="ni-dash" onclick="navTo('dash')">
+      <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
+      <span class="ni-lbl">概要</span>
+    </button>
+    <button class="ni" id="ni-risk" onclick="navTo('risk')">
+      <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      <span class="ni-lbl">リスク</span>
+    </button>
+    <button class="ni" id="ni-sim" onclick="navTo('sim')">
+      <svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+      <span class="ni-lbl">シミュ</span>
+    </button>
+    <button class="ni" id="ni-report" onclick="navTo('report')">
+      <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+      <span class="ni-lbl">レポート</span>
+    </button>
+  </nav>
+</div>
+
+<!-- MODALS -->
+<div class="modal-bg hide" id="monthModal" onclick="if(event.target===this)this.classList.add('hide')">
+  <div class="modal-sheet" id="monthSheet"></div>
+</div>
+
+<div class="modal-bg hide" id="confirmModal">
+  <div class="modal-sheet">
+    <div class="m-hdr">
+      <div><div class="s-eye">Confirm</div><div class="m-ttl">解析結果を確認</div></div>
+      <button class="m-close" onclick="document.getElementById('confirmModal').classList.add('hide')">×</button>
+    </div>
+    <div class="m-scroll" id="confirmList"></div>
+    <div class="m-footer">
+      <button class="btn-s" style="flex:1;" onclick="document.getElementById('confirmModal').classList.add('hide')">キャンセル</button>
+      <button class="btn-p" style="flex:2;" onclick="confirmSave()">✓ 保存する</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-bg hide" id="manualModal">
+  <div class="modal-sheet">
+    <div class="m-hdr">
+      <div><div class="s-eye">Manual Entry</div><div class="m-ttl" id="manualTitle">手動入力</div></div>
+      <button class="m-close" onclick="document.getElementById('manualModal').classList.add('hide')">×</button>
+    </div>
+    <div class="m-scroll" style="display:flex;flex-direction:column;gap:11px;">
+      <div class="sim-fld"><div class="sim-lbl">年月</div><input class="sim-inp" type="month" id="manualMonth"></div>
+      <div class="sim-fld"><div class="sim-lbl">総資産額（円）</div><input class="sim-inp" type="number" id="manualTotal" placeholder="3500000"></div>
+      <div id="manualCats"></div>
+      <div class="sim-fld"><div class="sim-lbl">メモ（任意）</div><input class="sim-inp" type="text" id="manualNote" placeholder="任意のメモ"></div>
+    </div>
+    <div class="m-footer">
+      <button class="btn-s" style="flex:1;" onclick="document.getElementById('manualModal').classList.add('hide')">キャンセル</button>
+      <button class="btn-p" style="flex:2;" id="manualSaveBtn" onclick="saveManual()">✓ 追加する</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-bg hide" id="apiKeyModal">
+  <div class="modal-sheet">
+    <div class="m-hdr">
+      <div><div class="s-eye">API Settings</div><div class="m-ttl">Gemini APIキー</div></div>
+      <button class="m-close" onclick="document.getElementById('apiKeyModal').classList.add('hide')">×</button>
+    </div>
+    <div style="margin-bottom:14px;">
+      <div class="api-status-bar" style="margin-bottom:11px;"><div class="api-dot ng" id="apiDotModal"></div><span id="apiDotModalTxt">未設定</span></div>
+      <div class="f-lbl">APIキー</div>
+      <input class="f-inp" type="password" id="apiKeyModalInp" placeholder="AIzaSy..." style="margin-bottom:7px;">
+      <div class="f-hint">無料で取得: <a href="https://aistudio.google.com/app/apikey" target="_blank">aistudio.google.com</a><br>Gemini 1.5 Flash（無料枠: 15回/分 / 1500回/日）</div>
+    </div>
+    <div class="m-footer">
+      <button class="btn-s" style="flex:1;" onclick="clearApiKey()">削除</button>
+      <button class="btn-p" style="flex:2;" onclick="saveApiKeyModal()">✓ 保存する</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-bg hide" id="colorModal">
+  <div class="modal-sheet">
+    <div class="m-hdr"><div class="m-ttl">カラーを選択</div><button class="m-close" onclick="document.getElementById('colorModal').classList.add('hide')">×</button></div>
+    <div class="color-grid" id="colorGrid"></div>
+    <button class="btn-p" style="width:100%;" onclick="closeColorPick()">決定</button>
+  </div>
+</div>
+
+<!-- ANALYSIS OVERLAY -->
+<div id="aoOverlay">
+  <div class="ao-ring">
+    <svg width="34" height="34" viewBox="0 0 24 24" fill="none">
+      <defs><linearGradient id="aog" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#f5dfa0"/><stop offset="100%" stop-color="#c9a84c"/></linearGradient></defs>
+      <circle cx="11" cy="11" r="8" stroke="url(#aog)" stroke-width="1.5"/>
+      <line x1="21" y1="21" x2="16.65" y2="16.65" stroke="url(#aog)" stroke-width="1.5" stroke-linecap="round"/>
+    </svg>
+  </div>
+  <div class="ao-ttl" id="aoTitle">AI解析中</div>
+  <div class="ao-sub" id="aoSub">GEMINI PROCESSING...</div>
+  <div class="ao-bar-wrap"><div class="ao-bar" id="aoBar"></div></div>
+  <div class="ao-log" id="aoLog"></div>
+  <div class="ao-count" id="aoCount"></div>
+</div>
+
+<!-- SUCCESS OVERLAY -->
+<div id="sucOverlay">
+  <div style="position:relative;display:flex;align-items:center;justify-content:center;width:96px;height:96px;">
+    <div class="so-ring"></div><div class="so-check">✓</div>
+  </div>
+  <div class="so-ttl" id="soTtl">解析完了</div>
+  <div class="so-sub" id="soSub">MONTHS RECORDED</div>
+</div>
+
+<!-- TOAST CONTAINER -->
+<div id="tc"></div>
+
+<script src="js/data.js"></script>
+<script src="js/api.js"></script>
+<script src="js/charts.js"></script>
+<script src="js/dashboard.js"></script>
+<script src="js/risk.js"></script>
+<script src="js/simulation.js"></script>
+<script src="js/settings.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>

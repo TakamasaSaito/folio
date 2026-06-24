@@ -1,0 +1,797 @@
+/* ===== トップバー ===== */
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 300;
+  padding: 12px 16px 10px;
+  background: rgba(7,8,14,.92);
+  backdrop-filter: blur(24px);
+  border-bottom: 1px solid var(--line);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.tb-brand { display: flex; align-items: center; gap: 9px; }
+.tb-mark {
+  width: 30px;
+  height: 30px;
+  background: linear-gradient(145deg, var(--raise), var(--deep));
+  border: 1px solid rgba(201,168,76,.35);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.tb-name {
+  font-family: "DM Serif Display", serif;
+  font-size: 16px;
+  letter-spacing: 2px;
+  background: var(--gold-grad);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.tb-r { display: flex; align-items: center; gap: 8px; }
+.live-badge {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 8px;
+  color: var(--em);
+  letter-spacing: 1.5px;
+  padding: 4px 9px;
+  background: rgba(45,212,160,.06);
+  border: 1px solid rgba(45,212,160,.18);
+  border-radius: 20px;
+}
+.live-dot {
+  width: 5px;
+  height: 5px;
+  background: var(--em);
+  border-radius: 50%;
+  box-shadow: 0 0 6px var(--em);
+  animation: blink 2.4s ease-in-out infinite;
+}
+.tb-clock {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 10px;
+  color: var(--txt3);
+}
+.tb-total {
+  font-family: "DM Serif Display", serif;
+  font-size: 13px;
+  background: var(--gold-grad);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  display: none;
+}
+.icon-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--txt3);
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 7px;
+}
+.icon-btn svg {
+  width: 18px;
+  height: 18px;
+  stroke: currentColor;
+  fill: none;
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.icon-btn:hover { color: var(--gold); }
+
+/* ===== ボトムナビ ===== */
+.bnav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 300;
+  height: calc(var(--nav-h) + var(--safe-b));
+  padding-bottom: var(--safe-b);
+  background: rgba(9,10,18,.97);
+  backdrop-filter: blur(24px);
+  border-top: 1px solid rgba(201,168,76,.12);
+  display: flex;
+  align-items: stretch;
+}
+.ni {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 8px 4px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  position: relative;
+}
+.ni:active { opacity: .6; }
+.ni svg {
+  width: 22px;
+  height: 22px;
+  stroke: var(--txt3);
+  fill: none;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  transition: stroke .2s;
+}
+.ni-lbl {
+  font-size: 9px;
+  font-weight: 500;
+  color: var(--txt3);
+  transition: color .2s;
+}
+.ni.active svg { stroke: var(--gold); }
+.ni.active .ni-lbl { color: var(--gold); }
+.ni.active::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 20%;
+  right: 20%;
+  height: 2px;
+  background: var(--gold-grad);
+  border-radius: 0 0 3px 3px;
+}
+
+/* ===== カード ===== */
+.card {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 15px;
+  padding: 16px;
+  margin-bottom: 12px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 2px 16px rgba(0,0,0,.22);
+}
+.card::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, var(--gold), transparent);
+  opacity: .28;
+  pointer-events: none;
+}
+.c-ttl {
+  font-family: "DM Serif Display", serif;
+  font-size: 15px;
+  color: var(--txt);
+  margin-bottom: 3px;
+}
+.c-sub {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 8px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--txt3);
+  margin-bottom: 12px;
+}
+
+/* ===== ボタン ===== */
+.btn-gold {
+  width: 100%;
+  background: var(--gold-grad);
+  color: #060400;
+  font-family: "Noto Sans JP", sans-serif;
+  font-weight: 700;
+  font-size: 14px;
+  padding: 15px;
+  border-radius: 13px;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 6px 24px var(--gold-glow);
+  position: relative;
+  overflow: hidden;
+}
+.btn-gold::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,.15), transparent);
+  background-size: 200% 100%;
+  animation: shimmer 2.5s linear infinite;
+}
+.btn-skip {
+  background: none;
+  border: none;
+  color: var(--txt3);
+  font-size: 12px;
+  cursor: pointer;
+  margin-top: 12px;
+  display: block;
+  text-align: center;
+  font-family: "Noto Sans JP", sans-serif;
+}
+.btn-p {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  background: var(--gold-grad);
+  color: #060400;
+  font-family: "Noto Sans JP", sans-serif;
+  font-weight: 700;
+  font-size: 13px;
+  border: none;
+  border-radius: 11px;
+  padding: 12px 14px;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+.btn-p::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(255,255,255,.12), transparent 60%);
+  pointer-events: none;
+}
+.btn-p:disabled { opacity: .35; cursor: not-allowed; }
+.btn-p:not(:disabled):active { opacity: .85; }
+.btn-s {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  background: var(--raise);
+  border: 1px solid var(--line);
+  color: var(--txt);
+  font-size: 12px;
+  font-family: "Noto Sans JP", sans-serif;
+  font-weight: 600;
+  border-radius: 11px;
+  padding: 12px 13px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.btn-s:active { background: var(--card); }
+.btn-g {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: 1px solid var(--line3);
+  color: var(--txt3);
+  font-size: 11px;
+  font-family: "JetBrains Mono", monospace;
+  border-radius: 11px;
+  padding: 12px 11px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.btn-g:active { background: var(--raise); }
+.btn-gen {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  width: 100%;
+  background: linear-gradient(135deg, var(--lift), var(--raise));
+  border: 1px solid rgba(201,168,76,.3);
+  color: var(--gold2);
+  font-size: 14px;
+  font-weight: 600;
+  padding: 14px;
+  border-radius: 12px;
+  cursor: pointer;
+  font-family: "Noto Sans JP", sans-serif;
+  margin-bottom: 13px;
+}
+.btn-gen:disabled { opacity: .35; cursor: not-allowed; }
+.btn-csv {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: none;
+  border: 1px solid rgba(45,212,160,.28);
+  color: var(--em);
+  font-family: "JetBrains Mono", monospace;
+  font-size: 9px;
+  padding: 5px 11px;
+  border-radius: 7px;
+  cursor: pointer;
+}
+
+/* ===== フォーム ===== */
+.f-lbl {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 9px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--txt3);
+  margin-bottom: 7px;
+}
+.f-inp {
+  width: 100%;
+  background: var(--raise);
+  border: 1px solid var(--line);
+  color: var(--txt);
+  padding: 13px 14px;
+  border-radius: 11px;
+  font-size: 14px;
+  font-family: "JetBrains Mono", monospace;
+  outline: none;
+  transition: border-color .2s;
+  margin-bottom: 8px;
+}
+.f-inp:focus {
+  border-color: rgba(201,168,76,.5);
+  box-shadow: 0 0 0 3px var(--gold-glow2);
+}
+.f-hint {
+  font-size: 11px;
+  color: var(--txt3);
+  margin-bottom: 18px;
+  line-height: 1.7;
+}
+.f-hint a { color: var(--gold); text-decoration: none; }
+
+/* ===== モーダル ===== */
+.modal-bg {
+  position: fixed;
+  inset: 0;
+  z-index: 800;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  background: rgba(0,0,0,.6);
+  backdrop-filter: blur(6px);
+  animation: fadeIn .2s;
+}
+.modal-bg.hide { display: none; }
+.modal-sheet {
+  background: var(--card);
+  border-radius: 21px 21px 0 0;
+  padding: 22px;
+  padding-bottom: calc(22px + var(--safe-b));
+  width: 100%;
+  max-width: 520px;
+  border-top: 1px solid var(--line);
+  box-shadow: 0 -8px 40px rgba(0,0,0,.5);
+  animation: sheetUp .32s cubic-bezier(.22,1,.36,1);
+}
+.m-hdr {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+.m-ttl {
+  font-family: "DM Serif Display", serif;
+  font-size: 19px;
+  color: var(--txt);
+}
+.m-close {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: var(--raise);
+  border: 1px solid var(--line);
+  color: var(--txt2);
+  cursor: pointer;
+  font-size: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.m-scroll {
+  overflow-y: auto;
+  max-height: 54vh;
+  padding-bottom: 4px;
+}
+.m-footer {
+  display: flex;
+  gap: 9px;
+  margin-top: 15px;
+}
+
+/* ===== トースト ===== */
+#tc {
+  position: fixed;
+  bottom: calc(var(--nav-h) + var(--safe-b) + 14px);
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  align-items: center;
+  pointer-events: none;
+  width: calc(100% - 28px);
+  max-width: 340px;
+}
+.toast {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 11px 16px;
+  border-radius: 13px;
+  font-size: 13px;
+  color: var(--txt);
+  font-family: "Noto Sans JP", sans-serif;
+  backdrop-filter: blur(20px);
+  animation: sheetUp .28s cubic-bezier(.22,1,.36,1);
+  transition: opacity .28s, transform .28s;
+  box-shadow: 0 8px 32px rgba(0,0,0,.4);
+  pointer-events: auto;
+  white-space: nowrap;
+}
+.toast.out { opacity: 0; transform: translateY(8px); }
+.toast.success { background: rgba(45,212,160,.12); border: 1px solid rgba(45,212,160,.25); }
+.toast.error   { background: rgba(240,92,110,.12); border: 1px solid rgba(240,92,110,.25); }
+.toast.info,
+.toast.loading { background: rgba(22,25,37,.9); border: 1px solid var(--line); }
+.t-ico {
+  width: 17px;
+  height: 17px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  flex-shrink: 0;
+}
+.toast.success .t-ico { background: rgba(45,212,160,.2); color: var(--em); }
+.toast.error   .t-ico { background: rgba(240,92,110,.2); color: var(--ruby); }
+
+/* ===== スピナー・ローダー ===== */
+.spin {
+  width: 15px;
+  height: 15px;
+  border: 2px solid var(--line);
+  border-top-color: var(--gold);
+  border-radius: 50%;
+  animation: rotate .7s linear infinite;
+  flex-shrink: 0;
+}
+.dot-loader { display: inline-flex; gap: 4px; align-items: center; }
+.dot-loader span {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--gold);
+  animation: dotPulse 1.2s infinite ease-in-out;
+}
+.dot-loader span:nth-child(1) { animation-delay: -.32s; }
+.dot-loader span:nth-child(2) { animation-delay: -.16s; }
+
+/* ===== APIセットアップ画面 ===== */
+#apiSetup {
+  position: fixed;
+  inset: 0;
+  z-index: 1800;
+  background: var(--ink);
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 32px;
+  overflow-y: auto;
+}
+.sc-card {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  padding: 28px;
+  width: 100%;
+  max-width: 380px;
+  animation: fadeUp .4s ease both;
+}
+.sc-icon {
+  width: 58px;
+  height: 58px;
+  background: rgba(201,168,76,.08);
+  border: 1px solid rgba(201,168,76,.2);
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 16px;
+  font-size: 24px;
+}
+.sc-ttl2 {
+  font-family: "DM Serif Display", serif;
+  font-size: 22px;
+  text-align: center;
+  background: var(--gold-grad);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin-bottom: 8px;
+}
+.sc-sub {
+  font-size: 12px;
+  color: var(--txt2);
+  text-align: center;
+  line-height: 1.8;
+  margin-bottom: 18px;
+}
+.sc-feats { display: flex; flex-direction: column; gap: 8px; margin-bottom: 18px; }
+.sc-feat { display: flex; align-items: center; gap: 10px; font-size: 12px; color: var(--txt2); }
+.sc-feat-ico {
+  width: 24px;
+  height: 24px;
+  background: rgba(201,168,76,.08);
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  flex-shrink: 0;
+}
+
+/* ===== カラーピッカー ===== */
+.color-grid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 10px;
+  margin-bottom: 18px;
+}
+.color-sw {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  cursor: pointer;
+  border: 3px solid transparent;
+  transition: transform .15s, border-color .15s;
+}
+.color-sw.sel { border-color: #fff; }
+.color-sw:active { transform: scale(.88); }
+
+/* ===== 解析オーバーレイ ===== */
+#aoOverlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1800;
+  background: var(--ink);
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 28px;
+}
+.ao-ring {
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(201,168,76,.12), transparent 70%);
+  border: 1px solid rgba(201,168,76,.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  animation: splPulse 1.5s ease-in-out infinite;
+  margin-bottom: 22px;
+}
+.ao-ring::before {
+  content: "";
+  position: absolute;
+  inset: -6px;
+  border-radius: 50%;
+  border-top: 2px solid var(--gold);
+  border-right: 2px solid transparent;
+  border-bottom: 2px solid transparent;
+  border-left: 2px solid transparent;
+  animation: rotate .9s linear infinite;
+}
+.ao-ttl {
+  font-family: "DM Serif Display", serif;
+  font-size: 22px;
+  color: var(--txt);
+  margin-bottom: 5px;
+}
+.ao-sub {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 11px;
+  color: var(--txt3);
+  letter-spacing: 2px;
+  margin-bottom: 26px;
+}
+.ao-bar-wrap {
+  width: 100%;
+  max-width: 260px;
+  height: 2px;
+  background: var(--line3);
+  border-radius: 1px;
+  margin-bottom: 14px;
+  overflow: hidden;
+}
+.ao-bar {
+  height: 100%;
+  background: var(--gold-grad);
+  width: 0%;
+  transition: width .4s ease;
+  border-radius: 1px;
+}
+.ao-log {
+  width: 100%;
+  max-width: 300px;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 11px;
+  padding: 13px;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 10px;
+  color: var(--txt3);
+  line-height: 2;
+  min-height: 96px;
+  max-height: 120px;
+  overflow: hidden;
+  position: relative;
+}
+.ao-log::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 32px;
+  background: linear-gradient(transparent, var(--card));
+  pointer-events: none;
+}
+.ao-count {
+  margin-top: 12px;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 9px;
+  color: var(--txt3);
+  letter-spacing: 2px;
+}
+
+/* ===== 成功オーバーレイ ===== */
+#sucOverlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1900;
+  background: var(--ink);
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.so-ring {
+  width: 96px;
+  height: 96px;
+  border-radius: 50%;
+  border: 3px solid var(--em);
+  animation: soExpand .6s cubic-bezier(.22,1,.36,1) both;
+}
+.so-check {
+  font-size: 46px;
+  color: var(--em);
+  animation: popIn .5s .1s cubic-bezier(.34,1.56,.64,1) both;
+  position: absolute;
+}
+.so-ttl {
+  font-family: "DM Serif Display", serif;
+  font-size: 26px;
+  color: var(--txt);
+  margin-top: 22px;
+}
+.so-sub {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 11px;
+  color: var(--gold);
+  letter-spacing: 2px;
+  margin-top: 7px;
+}
+
+/* ===== テーブル ===== */
+.tbl-wrap { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; font-size: 11px; }
+thead th {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 7.5px;
+  font-weight: 500;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--txt3);
+  padding: 7px 9px;
+  border-bottom: 1px solid var(--line);
+  text-align: left;
+  white-space: nowrap;
+}
+tbody td {
+  padding: 10px 9px;
+  border-bottom: 1px solid var(--line2);
+  font-family: "JetBrains Mono", monospace;
+  font-size: 10px;
+  color: var(--txt2);
+}
+tbody tr:last-child td { border-bottom: none; }
+tbody tr { cursor: pointer; transition: background .15s; }
+tbody tr:active { background: rgba(201,168,76,.04); }
+.td-hi  { color: var(--txt); font-weight: 500; }
+.td-up  { color: var(--em); }
+.td-dn  { color: var(--ruby); }
+.td-btn {
+  background: none;
+  border: 1px solid var(--line);
+  color: var(--txt3);
+  font-size: 10px;
+  padding: 3px 7px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-family: "JetBrains Mono", monospace;
+}
+.td-del {
+  background: none;
+  border: 1px solid rgba(240,92,110,.25);
+  color: var(--ruby);
+  font-size: 10px;
+  padding: 3px 7px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-family: "JetBrains Mono", monospace;
+}
+
+/* ===== 確認モーダル内フォーム ===== */
+.conf-card {
+  background: var(--raise);
+  border: 1px solid var(--line);
+  border-radius: 13px;
+  padding: 15px;
+  margin-bottom: 11px;
+}
+.conf-tag {
+  display: inline-block;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 10px;
+  letter-spacing: 2px;
+  color: var(--gold);
+  background: var(--gold-glow2);
+  border: 1px solid rgba(201,168,76,.2);
+  border-radius: 20px;
+  padding: 3px 9px;
+  margin-bottom: 11px;
+}
+.conf-fld { display: flex; flex-direction: column; gap: 4px; margin-bottom: 9px; }
+.conf-lbl {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 8px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--txt3);
+}
+.conf-inp {
+  background: var(--lift);
+  border: 1px solid var(--line);
+  color: var(--txt);
+  padding: 9px 11px;
+  border-radius: 9px;
+  font-size: 14px;
+  font-family: "JetBrains Mono", monospace;
+  outline: none;
+  width: 100%;
+}
+.conf-inp:focus { border-color: rgba(201,168,76,.45); }
+.conf-cats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 7px;
+  margin-top: 7px;
+}
+.conf-cat-fld { display: flex; flex-direction: column; gap: 3px; }
+.conf-cat-lbl {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 8px;
+  color: var(--txt3);
+}
+.c-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
