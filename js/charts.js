@@ -299,7 +299,8 @@ function renderSparkline(canvasId) {
   g.addColorStop(0, isUp ? 'rgba(45,212,160,.06)' : 'rgba(240,92,110,.06)');
   g.addColorStop(.72, isUp ? 'rgba(45,212,160,.025)' : 'rgba(240,92,110,.025)');
   g.addColorStop(1, 'rgba(0,0,0,0)');
-  const yMin = Math.min(...vals) * .95;
+  const yMin = Math.min(...vals) * .98;
+  const yMax = Math.max(...vals) * 1.02;
 
   sparkChart = new Chart(ctx, {
     type: 'line',
@@ -349,6 +350,7 @@ function renderSparkline(canvasId) {
         y: {
           display: false,
           min: yMin,
+          max: yMax,
         },
       },
     },
