@@ -624,6 +624,11 @@ select.sim-inp option { background: var(--card); }
   margin-bottom: 4px;
 }
 .sim-hist-row b { color: var(--txt); font-weight: 500; }
+.sim-hist-cap {
+  font-size: 9px;
+  color: var(--gold);
+  margin-bottom: 3px;
+}
 .sim-hist-note {
   font-size: 9px;
   color: var(--txt3);
