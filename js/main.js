@@ -21,6 +21,7 @@ function navTo(n) {
   SCREENS.forEach(s => {
     document.getElementById('sc-' + s)?.classList.toggle('active', s === n);
     document.getElementById('ni-' + s)?.classList.toggle('active', n !== 'settings' && s === n);
+    document.getElementById('sni-' + s)?.classList.toggle('active', s === n);
   });
   if (n === 'risk')     renderRisk();
   if (n === 'sim')      runSim();

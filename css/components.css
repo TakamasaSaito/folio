@@ -795,3 +795,96 @@ tbody tr:active { background: rgba(201,168,76,.04); }
   color: var(--txt3);
 }
 .c-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+
+/* ===== サイドバーナビ (PC専用・デフォルト非表示) ===== */
+.sidebar {
+  display: none;
+  position: fixed;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: var(--sidebar-w);
+  background: var(--deep);
+  border-right: 1px solid var(--line);
+  flex-direction: column;
+  z-index: 350;
+  padding: var(--topbar-h) 10px 16px;
+  overflow-y: auto;
+}
+.sni {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 10px 13px;
+  background: none;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  color: var(--txt3);
+  font-family: "Noto Sans JP", sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  text-align: left;
+  transition: background .15s, color .15s;
+  margin-bottom: 3px;
+  position: relative;
+}
+.sni svg {
+  width: 17px;
+  height: 17px;
+  stroke: currentColor;
+  fill: none;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  flex-shrink: 0;
+  transition: stroke .2s;
+}
+.sni:hover {
+  background: rgba(255,255,255,.04);
+  color: var(--txt2);
+}
+.sni.active {
+  background: rgba(201,168,76,.1);
+  color: var(--gold2);
+}
+.sni.active svg { stroke: var(--gold); }
+.sni.active::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 18%;
+  bottom: 18%;
+  width: 2px;
+  background: var(--gold-grad);
+  border-radius: 0 2px 2px 0;
+}
+.sidebar-bottom {
+  margin-top: auto;
+  padding-top: 10px;
+  border-top: 1px solid var(--line2);
+}
+
+/* ===== PC (1024px以上) レイアウト切替 ===== */
+@media (min-width: 1024px) {
+  .topbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 400;
+    padding: 14px 28px;
+  }
+  .bnav {
+    display: none;
+  }
+  .sidebar {
+    display: flex;
+    top: 0;
+  }
+  #tc {
+    bottom: 24px;
+    left: calc(var(--sidebar-w) + (100% - var(--sidebar-w)) / 2);
+  }
+}

@@ -775,3 +775,66 @@ select.sim-inp option { background: var(--card); }
   color: var(--txt3);
   white-space: nowrap;
 }
+
+/* ===== PC (1024px以上) 画面別スタイル ===== */
+@media (min-width: 1024px) {
+
+  /* 共通 */
+  .s-ttl { font-size: 26px; }
+  .card { padding: 22px 24px; margin-bottom: 16px; border-radius: 18px; }
+
+  /* ホーム */
+  .hero-card { padding: 28px 28px 22px; }
+  .h-total { font-size: 44px; }
+  .metric-strip { gap: 12px; margin-bottom: 20px; }
+  .mp { padding: 13px 10px; }
+  .mp-lbl { font-size: 8px; }
+  .mp-val { font-size: 17px; }
+  .mp-sub { font-size: 9px; }
+  .quick-grid { grid-template-columns: repeat(4, 1fr); gap: 12px; }
+  .qc { padding: 20px 18px; }
+  .qc-ttl { font-size: 14px; }
+
+  /* ダッシュボード */
+  .kpi-strip { overflow: visible; gap: 12px; margin-bottom: 20px; }
+  .kpi { min-width: 0; flex: 1; padding: 14px; }
+  .kpi-eye { font-size: 8px; }
+  .kpi-num { font-size: 20px; }
+  .kpi-delta { font-size: 10px; }
+  .dash-grid {
+    display: grid;
+    grid-template-columns: 3fr 2fr;
+    gap: 16px;
+    margin-bottom: 16px;
+  }
+  .dash-grid > .card { margin-bottom: 0; }
+  .insight-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+
+  /* リスク診断 */
+  .score-hero { padding: 24px; margin-bottom: 20px; }
+  .score-big { font-size: 64px; }
+  .sc-verdict { font-size: 20px; }
+  .risk-meters { gap: 14px; margin-bottom: 22px; }
+  .rmeter { padding: 18px; }
+  .rmeter-score { font-size: 28px; }
+  .advice-grid { gap: 14px; }
+
+  /* シミュレーション */
+  .sim-inputs { grid-template-columns: repeat(4, 1fr); gap: 14px; }
+  .sim-results { gap: 12px; margin-bottom: 18px; }
+  .sim-res { padding: 16px 14px; }
+  .sim-res-val { font-size: 17px; }
+  .sim-res.hero .sim-res-val { font-size: 20px; }
+
+  /* 設定 */
+  .stg-hdr {
+    margin: -32px -40px 24px;
+    padding: 15px 40px;
+  }
+  .stg-grp { border-radius: 15px; }
+  .s-row { padding: 14px 18px; }
+}
