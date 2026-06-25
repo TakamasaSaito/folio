@@ -75,8 +75,8 @@
 .h-diff.up  { background: rgba(45,212,160,.1);  color: var(--em);   border: 1px solid rgba(45,212,160,.2); }
 .h-diff.dn  { background: rgba(240,92,110,.1);  color: var(--ruby); border: 1px solid rgba(240,92,110,.15); }
 .h-diff.neu { background: rgba(255,255,255,.05); color: var(--txt3); border: 1px solid var(--line); }
-.h-spark { height: 80px; }
-.h-spark canvas { width: 100% !important; height: 80px !important; }
+.h-spark { height: 96px; margin-top: 8px; }
+.h-spark canvas { width: 100% !important; height: 96px !important; display: block; }
 
 /* ゴール進捗バー */
 .h-goal {
@@ -873,4 +873,125 @@ select.sim-inp option { background: var(--card); }
   }
   .stg-grp { border-radius: 15px; }
   .s-row { padding: 14px 18px; }
+}
+
+/* カテゴリ別推移：グラフィカルカード */
+.cat-trend-card {
+  padding: 18px;
+  background:
+    radial-gradient(circle at 18% 8%, rgba(201,168,76,.12), transparent 32%),
+    radial-gradient(circle at 88% 18%, rgba(45,212,160,.10), transparent 30%),
+    linear-gradient(145deg, rgba(16,19,31,.96), rgba(11,13,22,.98));
+}
+.cat-trend-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    linear-gradient(rgba(255,255,255,.026) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,.026) 1px, transparent 1px);
+  background-size: 34px 34px;
+  mask-image: linear-gradient(to bottom, rgba(0,0,0,.8), transparent 88%);
+}
+.cat-trend-head {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+  margin-bottom: 12px;
+}
+.cat-trend-total {
+  min-width: 126px;
+  padding: 10px 12px;
+  border: 1px solid rgba(201,168,76,.22);
+  border-radius: 14px;
+  background: rgba(7,8,14,.38);
+  text-align: right;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.05);
+}
+.ctt-label {
+  display: block;
+  margin-bottom: 2px;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 8px;
+  letter-spacing: 2px;
+  color: var(--txt3);
+  text-transform: uppercase;
+}
+.cat-trend-total strong {
+  display: block;
+  font-family: "DM Serif Display", serif;
+  font-size: 18px;
+  color: var(--gold2);
+  white-space: nowrap;
+}
+.ctt-diff {
+  display: inline-block;
+  margin-top: 3px;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 9px;
+}
+.ctt-diff.up { color: var(--emerald); }
+.ctt-diff.dn { color: var(--ruby); }
+.cat-trend-highlights {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 9px;
+  margin-bottom: 12px;
+}
+.ct-chip {
+  padding: 10px 11px;
+  border: 1px solid color-mix(in srgb, var(--chip) 36%, transparent);
+  border-radius: 13px;
+  background: linear-gradient(145deg, color-mix(in srgb, var(--chip) 14%, transparent), rgba(7,8,14,.38));
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.05);
+}
+.ct-chip-top {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  font-size: 10px;
+  color: var(--txt2);
+}
+.ct-chip-top strong {
+  color: var(--txt);
+  font-family: "JetBrains Mono", monospace;
+  font-size: 10px;
+}
+.ct-chip-val {
+  margin: 5px 0 7px;
+  font-family: "DM Serif Display", serif;
+  font-size: 16px;
+  color: var(--txt);
+}
+.ct-chip-bar {
+  height: 4px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: rgba(255,255,255,.07);
+}
+.ct-chip-bar i {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, var(--chip), color-mix(in srgb, var(--chip) 45%, white));
+  box-shadow: 0 0 16px color-mix(in srgb, var(--chip) 42%, transparent);
+}
+.cat-chart-wrap {
+  position: relative;
+  z-index: 1;
+  height: 300px;
+  padding: 4px 0 0;
+}
+
+@media (max-width: 767px) {
+  .cat-trend-head { flex-direction: column; }
+  .cat-trend-total { width: 100%; text-align: left; }
+  .cat-trend-highlights { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .cat-chart-wrap { height: 260px; }
 }
