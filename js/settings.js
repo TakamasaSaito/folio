@@ -92,15 +92,31 @@ function importJSON(input) {
   r.onload = e => {
     try {
       const raw = JSON.parse(e.target.result);
-      if (!raw.allData || !Array.isArray(raw.allData)) throw new Error('形式が正しくありません');
-      if (!confirm(`${raw.allData.length}件を復元します。現在のデータは上書きされます。`)) return;
-      allData = raw.allData;
-      if (raw.categories && raw.categories.length) categories = raw.categories;
-      if (raw.goal) goal = raw.goal;
+      const importArr = Array.isArray(raw)
+        ? raw
+        : (raw.allData && Array.isArray(raw.allData) ? raw.allData : null);
+      if (!importArr) throw new Error('allDataまたは配列形式のJSONが必要です');
+      if (!confirm(`${importArr.length}件をインポートします`)) return;
+
+      if (!Array.isArray(raw)) {
+        if (raw.categories && raw.categories.length) categories = raw.categories;
+        if (raw.goal) goal = raw.goal;
+      }
+      let added = 0;
+      importArr.forEach(d => {
+        if (d.month && d.total > 0) {
+          if (!d.categories) d.categories = {};
+          allData = allData.filter(x => x.month !== d.month);
+          allData.push(d);
+          added++;
+        }
+      });
+      allData.sort((a, b) => a.month.localeCompare(b.month));
       saveData();
       saveSettings();
       renderDashboard();
-      toast(allData.length + '件を復元しました ✓', 'success');
+      toast(added + '件追加しました ✓', 'success');
+      setTimeout(() => navTo('dash'), 500);
     } catch (err) {
       toast('エラー: ' + err.message, 'error');
     }
