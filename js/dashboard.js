@@ -1,7 +1,6 @@
 /* ===== ダッシュボード・ホーム描画 ===== */
 
 function renderDashboard() {
-  simInitialized = false;
   document.getElementById('emptyState').style.display = allData.length ? 'none' : 'block';
   document.getElementById('quickNav').style.display   = allData.length ? 'block' : 'none';
   renderHomeSummary();
