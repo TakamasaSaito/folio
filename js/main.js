@@ -16,7 +16,7 @@ function rmToast(t) {
 }
 
 /* ===== 画面遷移 ===== */
-const SCREENS = ['home', 'dash', 'risk', 'sim', 'report', 'settings'];
+const SCREENS = ['home', 'dash', 'risk', 'sim', 'settings'];
 function navTo(n) {
   SCREENS.forEach(s => {
     document.getElementById('sc-' + s)?.classList.toggle('active', s === n);
@@ -25,11 +25,7 @@ function navTo(n) {
   });
   if (n === 'risk')     renderRisk();
   if (n === 'sim')      runSim();
-  if (n === 'settings') { renderCatList(); updateApiStatus(); }
-  if (n === 'report') {
-    const w = document.getElementById('rptApiWarn');
-    if (w) w.style.display = apiKey ? 'none' : 'flex';
-  }
+  if (n === 'settings') renderCatList();
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
@@ -54,30 +50,6 @@ window.addEventListener('load', () => {
 function enterApp() {
   document.getElementById('app').classList.add('show');
   renderDashboard();
-}
-
-/* ===== APIキー (AIレポート用・任意) ===== */
-function openApiKeyModal() {
-  document.getElementById('apiKeyModalInp').value = apiKey || '';
-  updateApiDotModal();
-  document.getElementById('apiKeyModal').classList.remove('hide');
-}
-function saveApiKeyModal() {
-  const v = document.getElementById('apiKeyModalInp').value.trim();
-  apiKey = v;
-  if (v) localStorage.setItem('folio_key', v);
-  else   localStorage.removeItem('folio_key');
-  document.getElementById('apiKeyModal').classList.add('hide');
-  updateApiStatus();
-  const w = document.getElementById('rptApiWarn');
-  if (w) w.style.display = v ? 'none' : 'flex';
-  toast(v ? 'APIキーを保存しました ✓' : 'APIキーを削除しました', 'success');
-}
-function clearApiKey() {
-  apiKey = '';
-  localStorage.removeItem('folio_key');
-  document.getElementById('apiKeyModalInp').value = '';
-  updateApiDotModal();
 }
 
 /* ===== JSON インポート ===== */

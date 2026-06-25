@@ -19,7 +19,6 @@ const PALETTE = [
 
 let categories = [...DEF_CATS];
 let goal = { amount: 0, date: '' };
-let apiKey = '';
 
 /* ===== ユーティリティ ===== */
 const fmt = n => {
@@ -77,7 +76,6 @@ function loadAll() {
       if (gd && goal.date)   gd.value = goal.date;
     }
   } catch (e) {}
-  apiKey = localStorage.getItem('folio_key') || '';
 }
 
 function saveData() {

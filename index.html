@@ -68,10 +68,6 @@
       <svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
       <span>シミュレーション</span>
     </button>
-    <button class="sni" id="sni-report" onclick="navTo('report')">
-      <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-      <span>AIレポート</span>
-    </button>
     <div class="sidebar-bottom">
       <button class="sni" id="sni-settings" onclick="navTo('settings')">
         <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
@@ -238,43 +234,6 @@ Exifの撮影日時から月（YYYY-MM形式）を特定してください。
     <div class="card"><div class="c-ttl">シナリオ比較</div><div class="c-sub">Bear / Neutral / Bull</div><canvas id="scenarioChart" height="180"></canvas></div>
   </div>
 
-  <!-- REPORT -->
-  <div class="screen" id="sc-report">
-    <div class="s-eye">AI Analysis</div><div class="s-ttl">AI レポート</div>
-    <div class="card">
-      <div class="c-ttl">総合レポート</div><div class="c-sub">Comprehensive Analysis by Gemini</div>
-      <div class="api-warn" id="rptApiWarn" style="display:none;align-items:center;justify-content:space-between;">
-        <span>⚠ APIキーが未設定です</span>
-        <button onclick="openApiKeyModal()" style="background:none;border:1px solid rgba(240,92,110,.4);color:var(--ruby);font-size:11px;border-radius:6px;padding:4px 10px;cursor:pointer;font-family:'Noto Sans JP',sans-serif;white-space:nowrap;flex-shrink:0;">キーを設定する</button>
-      </div>
-      <button class="btn-gen" id="reportBtn" onclick="generateReport()">✦ AI レポートを生成する</button>
-      <div class="rpt-wrap"><div class="rpt-txt ph" id="reportBody">← ボタンを押すとGeminiが詳細レポートを生成します</div></div>
-    </div>
-    <div class="card">
-      <div class="c-ttl">資産配分アドバイス</div><div class="c-sub">Portfolio Allocation · Powered by Gemini</div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:11px;margin-bottom:11px;">
-        <div class="sim-fld"><div class="sim-lbl">年齢</div><input class="sim-inp" type="number" id="allocAge" value="35"></div>
-        <div class="sim-fld"><div class="sim-lbl">リスク許容度</div>
-          <select class="sim-inp" id="allocRisk">
-            <option value="low">低（安定）</option>
-            <option value="mid" selected>中（バランス）</option>
-            <option value="high">高（成長）</option>
-          </select>
-        </div>
-      </div>
-      <div class="sim-fld" style="margin-bottom:13px;"><div class="sim-lbl">投資目的</div>
-        <select class="sim-inp" id="allocPurpose">
-          <option value="retire">老後資金</option>
-          <option value="house">住宅購入</option>
-          <option value="edu">教育資金</option>
-          <option value="wealth">資産拡大</option>
-        </select>
-      </div>
-      <button class="btn-gen" id="allocBtn" onclick="generateAlloc()">✦ 最適配分を診断する</button>
-      <div class="rpt-wrap"><div class="rpt-txt ph" id="allocBody">年齢・リスク許容度をもとに最適な資産配分をアドバイスします</div></div>
-    </div>
-  </div>
-
   <!-- SETTINGS -->
   <div class="screen" id="sc-settings">
     <div class="stg-hdr">
@@ -304,7 +263,7 @@ Exifの撮影日時から月（YYYY-MM形式）を特定してください。
       <div class="s-row" onclick="exportCSV()"><div class="s-row-ico">📤</div><div class="s-row-body"><div class="s-row-ttl">CSV エクスポート</div></div><div class="s-row-end">›</div></div>
       <div class="s-row" onclick="clearAll()"><div class="s-row-ico">🗑</div><div class="s-row-body"><div class="s-row-ttl" style="color:var(--ruby);">全データをリセット</div></div><div class="s-row-end">›</div></div>
     </div>
-    <div style="text-align:center;padding:10px 0;font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--txt3);letter-spacing:1px;">FOLIO · Powered by Gemini AI · v3.0</div>
+    <div style="text-align:center;padding:10px 0;font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--txt3);letter-spacing:1px;">FOLIO · ChatGPT Import Edition · v4.0</div>
   </div>
 
   <nav class="bnav">
@@ -323,10 +282,6 @@ Exifの撮影日時から月（YYYY-MM形式）を特定してください。
     <button class="ni" id="ni-sim" onclick="navTo('sim')">
       <svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
       <span class="ni-lbl">シミュ</span>
-    </button>
-    <button class="ni" id="ni-report" onclick="navTo('report')">
-      <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-      <span class="ni-lbl">レポート</span>
     </button>
   </nav>
 </div>
@@ -356,24 +311,6 @@ Exifの撮影日時から月（YYYY-MM形式）を特定してください。
   </div>
 </div>
 
-<div class="modal-bg hide" id="apiKeyModal">
-  <div class="modal-sheet">
-    <div class="m-hdr">
-      <div><div class="s-eye">API Settings</div><div class="m-ttl">Gemini APIキー</div></div>
-      <button class="m-close" onclick="document.getElementById('apiKeyModal').classList.add('hide')">×</button>
-    </div>
-    <div style="margin-bottom:14px;">
-      <div class="api-status-bar" style="margin-bottom:11px;"><div class="api-dot ng" id="apiDotModal"></div><span id="apiDotModalTxt">未設定</span></div>
-      <div class="f-lbl">APIキー</div>
-      <input class="f-inp" type="password" id="apiKeyModalInp" placeholder="AIzaSy..." style="margin-bottom:7px;">
-      <div class="f-hint">無料で取得: <a href="https://aistudio.google.com/app/apikey" target="_blank">aistudio.google.com</a><br>Gemini 1.5 Flash（無料枠: 15回/分 / 1500回/日）</div>
-    </div>
-    <div class="m-footer">
-      <button class="btn-s" style="flex:1;" onclick="clearApiKey()">削除</button>
-      <button class="btn-p" style="flex:2;" onclick="saveApiKeyModal()">✓ 保存する</button>
-    </div>
-  </div>
-</div>
 
 <div class="modal-bg hide" id="colorModal">
   <div class="modal-sheet">
@@ -387,7 +324,6 @@ Exifの撮影日時から月（YYYY-MM形式）を特定してください。
 <div id="tc"></div>
 
 <script src="js/data.js"></script>
-<script src="js/api.js"></script>
 <script src="js/charts.js"></script>
 <script src="js/dashboard.js"></script>
 <script src="js/risk.js"></script>

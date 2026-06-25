@@ -597,66 +597,6 @@ select.sim-inp option { background: var(--card); }
 .sim-res-val { font-family: "DM Serif Display", serif; font-size: 14px; color: var(--txt); }
 .sim-res.hero .sim-res-val { color: var(--em); }
 
-/* ===== AIレポート画面 ===== */
-.rpt-wrap {
-  background: var(--raise);
-  border: 1px solid var(--line);
-  border-radius: 13px;
-  padding: 18px;
-  min-height: 110px;
-  position: relative;
-  overflow: hidden;
-}
-.rpt-wrap::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 1px;
-  background: linear-gradient(90deg, var(--gold), transparent);
-  opacity: .28;
-}
-.rpt-txt { font-size: 13px; line-height: 1.95; color: var(--txt2); white-space: pre-wrap; }
-.rpt-txt.ph { color: var(--txt3); font-style: italic; }
-.rpt-sec {
-  background: var(--raise);
-  border: 1px solid var(--line);
-  border-radius: 13px;
-  padding: 15px;
-  margin-bottom: 11px;
-  border-left: 3px solid var(--gold);
-}
-.rpt-sec-ttl {
-  font-family: "JetBrains Mono", monospace;
-  font-size: 9px;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  color: var(--gold);
-  margin-bottom: 7px;
-}
-.rpt-row {
-  display: flex;
-  align-items: flex-start;
-  gap: 9px;
-  padding: 9px 0;
-  border-bottom: 1px solid var(--line3);
-}
-.rpt-row:last-child { border-bottom: none; padding-bottom: 0; }
-.rpt-row-ico { font-size: 17px; flex-shrink: 0; margin-top: 1px; }
-.rpt-row-txt { font-size: 12px; color: var(--txt2); line-height: 1.6; }
-.rpt-row-txt strong { color: var(--txt); }
-.api-warn {
-  background: rgba(240,92,110,.08);
-  border: 1px solid rgba(240,92,110,.25);
-  border-radius: 9px;
-  padding: 11px 13px;
-  margin-bottom: 13px;
-  font-size: 12px;
-  color: var(--ruby);
-  display: none;
-}
-
 /* ===== 設定画面 ===== */
 .stg-hdr {
   display: flex;

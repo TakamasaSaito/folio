@@ -207,17 +207,6 @@
   background-size: 200% 100%;
   animation: shimmer 2.5s linear infinite;
 }
-.btn-skip {
-  background: none;
-  border: none;
-  color: var(--txt3);
-  font-size: 12px;
-  cursor: pointer;
-  margin-top: 12px;
-  display: block;
-  text-align: center;
-  font-family: "Noto Sans JP", sans-serif;
-}
 .btn-p {
   display: flex;
   align-items: center;
@@ -276,24 +265,6 @@
   white-space: nowrap;
 }
 .btn-g:active { background: var(--raise); }
-.btn-gen {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 9px;
-  width: 100%;
-  background: linear-gradient(135deg, var(--lift), var(--raise));
-  border: 1px solid rgba(201,168,76,.3);
-  color: var(--gold2);
-  font-size: 14px;
-  font-weight: 600;
-  padding: 14px;
-  border-radius: 12px;
-  cursor: pointer;
-  font-family: "Noto Sans JP", sans-serif;
-  margin-bottom: 13px;
-}
-.btn-gen:disabled { opacity: .35; cursor: not-allowed; }
 .btn-csv {
   display: inline-flex;
   align-items: center;
@@ -471,70 +442,6 @@
 .dot-loader span:nth-child(1) { animation-delay: -.32s; }
 .dot-loader span:nth-child(2) { animation-delay: -.16s; }
 
-/* ===== APIセットアップ画面 ===== */
-#apiSetup {
-  position: fixed;
-  inset: 0;
-  z-index: 1800;
-  background: var(--ink);
-  display: none;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 32px;
-  overflow-y: auto;
-}
-.sc-card {
-  background: var(--card);
-  border: 1px solid var(--line);
-  border-radius: 20px;
-  padding: 28px;
-  width: 100%;
-  max-width: 380px;
-  animation: fadeUp .4s ease both;
-}
-.sc-icon {
-  width: 58px;
-  height: 58px;
-  background: rgba(201,168,76,.08);
-  border: 1px solid rgba(201,168,76,.2);
-  border-radius: 16px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin: 0 auto 16px;
-  font-size: 24px;
-}
-.sc-ttl2 {
-  font-family: "DM Serif Display", serif;
-  font-size: 22px;
-  text-align: center;
-  background: var(--gold-grad);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  margin-bottom: 8px;
-}
-.sc-sub {
-  font-size: 12px;
-  color: var(--txt2);
-  text-align: center;
-  line-height: 1.8;
-  margin-bottom: 18px;
-}
-.sc-feats { display: flex; flex-direction: column; gap: 8px; margin-bottom: 18px; }
-.sc-feat { display: flex; align-items: center; gap: 10px; font-size: 12px; color: var(--txt2); }
-.sc-feat-ico {
-  width: 24px;
-  height: 24px;
-  background: rgba(201,168,76,.08);
-  border-radius: 6px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 12px;
-  flex-shrink: 0;
-}
-
 /* ===== カラーピッカー ===== */
 .color-grid {
   display: grid;
@@ -552,143 +459,6 @@
 }
 .color-sw.sel { border-color: #fff; }
 .color-sw:active { transform: scale(.88); }
-
-/* ===== 解析オーバーレイ ===== */
-#aoOverlay {
-  position: fixed;
-  inset: 0;
-  z-index: 1800;
-  background: var(--ink);
-  display: none;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 40px 28px;
-}
-.ao-ring {
-  width: 90px;
-  height: 90px;
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(201,168,76,.12), transparent 70%);
-  border: 1px solid rgba(201,168,76,.3);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: relative;
-  animation: splPulse 1.5s ease-in-out infinite;
-  margin-bottom: 22px;
-}
-.ao-ring::before {
-  content: "";
-  position: absolute;
-  inset: -6px;
-  border-radius: 50%;
-  border-top: 2px solid var(--gold);
-  border-right: 2px solid transparent;
-  border-bottom: 2px solid transparent;
-  border-left: 2px solid transparent;
-  animation: rotate .9s linear infinite;
-}
-.ao-ttl {
-  font-family: "DM Serif Display", serif;
-  font-size: 22px;
-  color: var(--txt);
-  margin-bottom: 5px;
-}
-.ao-sub {
-  font-family: "JetBrains Mono", monospace;
-  font-size: 11px;
-  color: var(--txt3);
-  letter-spacing: 2px;
-  margin-bottom: 26px;
-}
-.ao-bar-wrap {
-  width: 100%;
-  max-width: 260px;
-  height: 2px;
-  background: var(--line3);
-  border-radius: 1px;
-  margin-bottom: 14px;
-  overflow: hidden;
-}
-.ao-bar {
-  height: 100%;
-  background: var(--gold-grad);
-  width: 0%;
-  transition: width .4s ease;
-  border-radius: 1px;
-}
-.ao-log {
-  width: 100%;
-  max-width: 300px;
-  background: var(--card);
-  border: 1px solid var(--line);
-  border-radius: 11px;
-  padding: 13px;
-  font-family: "JetBrains Mono", monospace;
-  font-size: 10px;
-  color: var(--txt3);
-  line-height: 2;
-  min-height: 96px;
-  max-height: 120px;
-  overflow: hidden;
-  position: relative;
-}
-.ao-log::after {
-  content: "";
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 32px;
-  background: linear-gradient(transparent, var(--card));
-  pointer-events: none;
-}
-.ao-count {
-  margin-top: 12px;
-  font-family: "JetBrains Mono", monospace;
-  font-size: 9px;
-  color: var(--txt3);
-  letter-spacing: 2px;
-}
-
-/* ===== 成功オーバーレイ ===== */
-#sucOverlay {
-  position: fixed;
-  inset: 0;
-  z-index: 1900;
-  background: var(--ink);
-  display: none;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-}
-.so-ring {
-  width: 96px;
-  height: 96px;
-  border-radius: 50%;
-  border: 3px solid var(--em);
-  animation: soExpand .6s cubic-bezier(.22,1,.36,1) both;
-}
-.so-check {
-  font-size: 46px;
-  color: var(--em);
-  animation: popIn .5s .1s cubic-bezier(.34,1.56,.64,1) both;
-  position: absolute;
-}
-.so-ttl {
-  font-family: "DM Serif Display", serif;
-  font-size: 26px;
-  color: var(--txt);
-  margin-top: 22px;
-}
-.so-sub {
-  font-family: "JetBrains Mono", monospace;
-  font-size: 11px;
-  color: var(--gold);
-  letter-spacing: 2px;
-  margin-top: 7px;
-}
 
 /* ===== テーブル ===== */
 .tbl-wrap { overflow-x: auto; }
