@@ -228,20 +228,44 @@ function renderSparkline(canvasId) {
   const vals = allData.map(d => d.total);
   const isUp = vals[vals.length - 1] >= vals[0];
   const color = isUp ? '#2dd4a0' : '#f05c6e';
-  const g = ctx.createLinearGradient(0, 0, 0, 36);
-  g.addColorStop(0, isUp ? 'rgba(45,212,160,.25)' : 'rgba(240,92,110,.25)');
+  const g = ctx.createLinearGradient(0, 0, 0, 72);
+  g.addColorStop(0, isUp ? 'rgba(45,212,160,.22)' : 'rgba(240,92,110,.22)');
   g.addColorStop(1, 'rgba(0,0,0,0)');
+
+  const radii = vals.map((_, i) => i === vals.length - 1 ? 7 : 4);
 
   sparkChart = new Chart(ctx, {
     type: 'line',
     data: {
       labels: allData.map(d => d.month),
-      datasets: [{ data: vals, borderColor: color, backgroundColor: g, borderWidth: 1.5, pointRadius: 0, tension: .4, fill: true }],
+      datasets: [{
+        data: vals,
+        borderColor: color,
+        backgroundColor: g,
+        borderWidth: 2,
+        pointRadius: radii,
+        pointBackgroundColor: color,
+        tension: .4,
+        fill: true,
+      }],
     },
     options: {
       responsive: true,
-      plugins: { legend: { display: false }, tooltip: { enabled: false } },
-      scales: { x: { display: false }, y: { display: false } },
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          enabled: true,
+          callbacks: { label: c => fmt(c.parsed.y) },
+        },
+      },
+      scales: {
+        x: {
+          display: true,
+          grid: { color: 'rgba(201,168,76,.08)' },
+          ticks: { color: '#3e4560', font: { size: 9 }, maxRotation: 0 },
+        },
+        y: { display: false },
+      },
     },
   });
 }
