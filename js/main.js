@@ -138,6 +138,46 @@ function handleJsonImport(file) {
   r.readAsText(file);
 }
 
+/* ===== テキスト貼り付けインポート ===== */
+function pasteImport() {
+  const text = document.getElementById('pasteArea').value.trim();
+  if (!text) return;
+  try {
+    const raw = JSON.parse(text);
+    const importArr = Array.isArray(raw)
+      ? raw
+      : (raw.allData && Array.isArray(raw.allData) ? raw.allData : null);
+    if (!importArr) throw new Error('allDataまたは配列形式のJSONが必要です');
+
+    if (!Array.isArray(raw)) {
+      if (raw.categories && raw.categories.length) categories = raw.categories;
+      if (raw.goal) {
+        goal = raw.goal;
+        try { localStorage.setItem('folio_goal', JSON.stringify(goal)); } catch (_) {}
+      }
+    }
+    let added = 0;
+    importArr.forEach(d => {
+      if (d.month && d.total > 0) {
+        if (!d.categories) d.categories = {};
+        allData = allData.filter(x => x.month !== d.month);
+        allData.push(d);
+        added++;
+      }
+    });
+    allData.sort((a, b) => a.month.localeCompare(b.month));
+    saveData();
+    saveSettings();
+    renderDashboard();
+    document.getElementById('pasteArea').value = '';
+    document.getElementById('pasteImportBtn').disabled = true;
+    toast(added + '件追加しました ✓', 'success');
+    setTimeout(() => navTo('dash'), 500);
+  } catch (err) {
+    toast('エラー: ' + err.message, 'error');
+  }
+}
+
 /* ===== プロンプトコピー ===== */
 function copyPrompt() {
   const text = document.getElementById('promptText').textContent;

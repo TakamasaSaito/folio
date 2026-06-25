@@ -123,6 +123,13 @@
         </div>
         <div class="iz-badge">JSON</div>
       </div>
+      <div style="margin-bottom:9px;">
+        <textarea id="pasteArea" rows="5" placeholder="ChatGPTのJSONをここに貼り付け..." style="width:100%;height:120px;background:var(--raise);border:1px solid var(--line);color:var(--txt);border-radius:11px;padding:11px 13px;font-family:'JetBrains Mono',monospace;font-size:11px;line-height:1.7;resize:none;outline:none;box-sizing:border-box;transition:border-color .2s;" onfocus="this.style.borderColor='rgba(201,168,76,.5)'" onblur="this.style.borderColor=''" oninput="document.getElementById('pasteImportBtn').disabled=!this.value.trim();"></textarea>
+        <button id="pasteImportBtn" class="btn-p" style="width:100%;margin-top:6px;" onclick="pasteImport()" disabled>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><path d="M16 4h2a2 2 0 012 2v14a2 2 0 01-2 2H6a2 2 0 01-2-2V6a2 2 0 012-2h2"/><rect x="8" y="2" width="8" height="4" rx="1"/></svg>
+          貼り付けてインポート
+        </button>
+      </div>
       <div style="display:flex;gap:8px;margin-bottom:14px;">
         <button class="btn-s" style="flex:1;" onclick="openManualModal(null)">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>手動入力
