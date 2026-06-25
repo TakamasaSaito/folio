@@ -597,6 +597,39 @@ select.sim-inp option { background: var(--card); }
 .sim-res-val { font-family: "DM Serif Display", serif; font-size: 14px; color: var(--txt); }
 .sim-res.hero .sim-res-val { color: var(--em); }
 
+/* 過去実績バナー */
+.sim-hist-banner {
+  grid-column: 1 / -1;
+  background: rgba(79,163,232,.06);
+  border: 1px solid rgba(79,163,232,.2);
+  border-radius: 10px;
+  padding: 11px 14px;
+  margin-bottom: 2px;
+}
+.sim-hist-ttl {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 8px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: #4fa3e8;
+  margin-bottom: 6px;
+}
+.sim-hist-row {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 11px;
+  color: var(--txt3);
+  margin-bottom: 4px;
+}
+.sim-hist-row b { color: var(--txt); font-weight: 500; }
+.sim-hist-note {
+  font-size: 9px;
+  color: var(--txt3);
+  opacity: .7;
+}
+
 /* ===== 設定画面 ===== */
 .stg-hdr {
   display: flex;

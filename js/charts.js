@@ -212,7 +212,7 @@ function renderVolatilityChart(rets) {
   });
 }
 
-function renderSimChart(lbls, vals, contrib, target) {
+function renderSimChart(lbls, vals, contrib, target, histData) {
   const { grid } = gc();
   const ctx = document.getElementById('simChart').getContext('2d');
   if (charts.sim) charts.sim.destroy();
@@ -221,24 +221,81 @@ function renderSimChart(lbls, vals, contrib, target) {
   g.addColorStop(0, 'rgba(201,168,76,.15)');
   g.addColorStop(1, 'rgba(201,168,76,0)');
 
+  const hasHist = histData && histData.labels.length >= 2;
+  const histLen = hasHist ? histData.labels.length : 0;
+  const splitIdx = hasHist ? histLen - 1 : -1;
+
+  // Combined labels: historical months + sim (drop "現在" since it overlaps with last hist)
+  const allLabels = hasHist
+    ? [...histData.labels, ...lbls.slice(1)]
+    : lbls;
+
+  // Datasets
+  const histDataset = hasHist ? {
+    label: '過去実績',
+    data: [...histData.vals, ...Array(lbls.length - 1).fill(null)],
+    borderColor: '#4fa3e8',
+    backgroundColor: 'rgba(79,163,232,.08)',
+    borderWidth: 2,
+    tension: .4,
+    fill: true,
+    pointRadius: 2,
+    pointHoverRadius: 5,
+    spanGaps: false,
+  } : null;
+
+  const simOffset = hasHist ? histLen - 1 : 0;
+  const simDataArr = hasHist ? [...Array(simOffset).fill(null), ...vals] : vals;
+  const contribArr = hasHist ? [...Array(simOffset).fill(null), ...contrib] : contrib;
+
+  const datasets = [];
+  if (histDataset) datasets.push(histDataset);
+  datasets.push(
+    { label: '予測資産', data: simDataArr,  borderColor: '#c9a84c', backgroundColor: hasHist ? 'transparent' : g, borderWidth: 2, tension: .4, fill: !hasHist, pointRadius: 1, pointHoverRadius: 5, spanGaps: false },
+    { label: '元本',     data: contribArr,  borderColor: '#4a5068', borderDash: [4,4], borderWidth: 1.5, fill: false, pointRadius: 0, spanGaps: false },
+    { label: '目標',     data: allLabels.map(() => target), borderColor: '#2dd4a0', borderDash: [6,3], borderWidth: 1.5, fill: false, pointRadius: 0 },
+  );
+
+  // Custom plugin: vertical divider line at the history/sim boundary
+  const dividerPlugin = {
+    id: 'simDivider',
+    afterDraw(chart) {
+      if (splitIdx < 0) return;
+      const meta = chart.getDatasetMeta(0);
+      if (!meta || !meta.data[splitIdx]) return;
+      const x = meta.data[splitIdx].x;
+      const { ctx: c, chartArea: { top, bottom } } = chart;
+      c.save();
+      c.beginPath();
+      c.moveTo(x, top + 14);
+      c.lineTo(x, bottom);
+      c.strokeStyle = 'rgba(201,168,76,.5)';
+      c.lineWidth = 1.5;
+      c.setLineDash([4, 3]);
+      c.stroke();
+      c.font = '500 9px "JetBrains Mono", monospace';
+      c.fillStyle = 'rgba(201,168,76,.8)';
+      c.textAlign = 'center';
+      c.fillText('現在', x, top + 10);
+      c.restore();
+    },
+  };
+
   charts.sim = new Chart(ctx, {
     type: 'line',
-    data: {
-      labels: lbls,
-      datasets: [
-        { label: '予測資産', data: vals,   borderColor: '#c9a84c', backgroundColor: g, borderWidth: 2, tension: .4, fill: true, pointRadius: 2 },
-        { label: '元本',     data: contrib, borderColor: '#4a5068', borderDash: [4,4], borderWidth: 1.5, fill: false, pointRadius: 0 },
-        { label: '目標',     data: lbls.map(() => target), borderColor: '#2dd4a0', borderDash: [6,3], borderWidth: 1.5, fill: false, pointRadius: 0 },
-      ],
-    },
+    data: { labels: allLabels, datasets },
+    plugins: [dividerPlugin],
     options: {
       responsive: true,
       plugins: {
         legend: { labels: { color: '#3e4560', font: { size: 9 } } },
-        tooltip: { ...tooltipDefaults, callbacks: { label: c => `${c.dataset.label}: ${fmt(c.raw)}` } },
+        tooltip: {
+          ...tooltipDefaults,
+          callbacks: { label: c => c.raw != null ? `${c.dataset.label}: ${fmt(c.raw)}` : null },
+        },
       },
       scales: {
-        x: { grid: { color: grid }, ticks: { color: '#3e4560', font: { size: 8 } } },
+        x: { grid: { color: grid }, ticks: { color: '#3e4560', font: { size: 8 }, maxRotation: 0, autoSkip: true, maxTicksLimit: 10 } },
         y: { grid: { color: grid }, ticks: { color: '#3e4560', font: { size: 8 }, callback: v => fmtS(v) } },
       },
     },
