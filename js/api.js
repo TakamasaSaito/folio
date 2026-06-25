@@ -1,7 +1,7 @@
 /* ===== Gemini API 呼び出し ===== */
 
 const GEMINI_URL = key =>
-  `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${key}`;
+  `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${key}`;
 
 async function callGeminiVision(base64, mimeType) {
   if (!apiKey) throw new Error('APIキーが設定されていません');
