@@ -75,8 +75,8 @@
 .h-diff.up  { background: rgba(45,212,160,.1);  color: var(--em);   border: 1px solid rgba(45,212,160,.2); }
 .h-diff.dn  { background: rgba(240,92,110,.1);  color: var(--ruby); border: 1px solid rgba(240,92,110,.15); }
 .h-diff.neu { background: rgba(255,255,255,.05); color: var(--txt3); border: 1px solid var(--line); }
-.h-spark { height: 80px; }
-.h-spark canvas { width: 100% !important; height: 80px !important; }
+.h-spark { height: 96px; margin-top: 8px; }
+.h-spark canvas { width: 100% !important; height: 96px !important; display: block; }
 
 /* ゴール進捗バー */
 .h-goal {

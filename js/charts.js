@@ -286,49 +286,70 @@ function renderScenarioChart(lbls, base, monthly, months) {
 }
 
 function renderSparkline(canvasId) {
-  const ctx = document.getElementById(canvasId).getContext('2d');
+  const canvas = document.getElementById(canvasId);
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
   if (sparkChart) sparkChart.destroy();
 
   const vals = allData.map(d => d.total);
+  const labels = allData.map(d => d.month);
   const isUp = vals[vals.length - 1] >= vals[0];
   const color = isUp ? '#2dd4a0' : '#f05c6e';
-  const g = ctx.createLinearGradient(0, 0, 0, 72);
-  g.addColorStop(0, isUp ? 'rgba(45,212,160,.22)' : 'rgba(240,92,110,.22)');
+  const g = ctx.createLinearGradient(0, 0, 0, 96);
+  g.addColorStop(0, isUp ? 'rgba(45,212,160,.06)' : 'rgba(240,92,110,.06)');
+  g.addColorStop(.72, isUp ? 'rgba(45,212,160,.025)' : 'rgba(240,92,110,.025)');
   g.addColorStop(1, 'rgba(0,0,0,0)');
-
-  const radii = vals.map((_, i) => i === vals.length - 1 ? 7 : 4);
+  const yMin = Math.min(...vals) * .95;
 
   sparkChart = new Chart(ctx, {
     type: 'line',
     data: {
-      labels: allData.map(d => d.month),
+      labels,
       datasets: [{
         data: vals,
         borderColor: color,
         backgroundColor: g,
         borderWidth: 2,
-        pointRadius: radii,
-        pointBackgroundColor: color,
-        tension: .4,
+        pointRadius: 0,
+        pointHoverRadius: 0,
+        tension: .6,
         fill: true,
       }],
     },
     options: {
       responsive: true,
+      maintainAspectRatio: false,
+      animation: { duration: 700, easing: 'easeOutQuart' },
+      layout: { padding: { top: 8, right: 10, bottom: 4, left: 10 } },
       plugins: {
         legend: { display: false },
         tooltip: {
-          enabled: true,
-          callbacks: { label: c => fmt(c.parsed.y) },
+          ...tooltipDefaults,
+          displayColors: false,
+          callbacks: {
+            title: items => items[0].label,
+            label: c => fmt(c.parsed.y),
+          },
         },
       },
+      interaction: { intersect: false, mode: 'index' },
       scales: {
         x: {
           display: true,
-          grid: { color: 'rgba(201,168,76,.08)' },
-          ticks: { color: '#3e4560', font: { size: 9 }, maxRotation: 0 },
+          grid: { display: false },
+          border: { display: false },
+          ticks: {
+            color: '#3e4560',
+            font: { size: 9, family: 'JetBrains Mono' },
+            maxRotation: 0,
+            autoSkip: true,
+            maxTicksLimit: 5,
+          },
         },
-        y: { display: false },
+        y: {
+          display: false,
+          min: yMin,
+        },
       },
     },
   });
