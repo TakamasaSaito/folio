@@ -9,6 +9,7 @@ function renderDashboard() {
   renderLineChart();
   renderDonutChart();
   renderBarChart();
+  renderCategoryHighlights();
   renderTable();
   renderInsights();
   const el = document.getElementById('tbTotal');
@@ -106,6 +107,45 @@ function renderKPIs() {
   ).join('');
 }
 
+
+/* カテゴリ別推移のサマリー */
+function renderCategoryHighlights() {
+  const totalEl = document.getElementById('catTrendTotal');
+  const highlightEl = document.getElementById('catTrendHighlights');
+  if (!totalEl || !highlightEl || !allData.length) return;
+
+  const d = fd();
+  const lat = d[d.length - 1];
+  const prev = d.length > 1 ? d[d.length - 2] : null;
+  const diff = prev ? lat.total - prev.total : 0;
+  const diffPct = prev ? diff / prev.total * 100 : 0;
+  const PAL = pal();
+
+  totalEl.innerHTML = `
+    <span class="ctt-label">Latest</span>
+    <strong>${fmt(lat.total)}</strong>
+    <span class="ctt-diff ${diff >= 0 ? 'up' : 'dn'}">${prev ? `${diff >= 0 ? '+' : ''}${diffPct.toFixed(1)}%` : '初月'}</span>
+  `;
+
+  const cats = categories
+    .map(c => ({
+      name: c.name,
+      color: PAL[c.name] || c.color || '#888',
+      value: (lat.categories || {})[c.name] || 0,
+    }))
+    .filter(c => c.value > 0)
+    .sort((a, b) => b.value - a.value);
+
+  highlightEl.innerHTML = cats.map(c => {
+    const pct = lat.total ? c.value / lat.total * 100 : 0;
+    return `<div class="ct-chip" style="--chip:${c.color};">
+      <div class="ct-chip-top"><span>${c.name}</span><strong>${pct.toFixed(1)}%</strong></div>
+      <div class="ct-chip-val">${fmt(c.value)}</div>
+      <div class="ct-chip-bar"><i style="width:${Math.max(2, pct)}%"></i></div>
+    </div>`;
+  }).join('');
+}
+
 /* 期間フィルター */
 function setPeriod(n) {
   activePeriod = n;
@@ -114,6 +154,7 @@ function setPeriod(n) {
   );
   renderLineChart();
   renderBarChart();
+  renderCategoryHighlights();
   renderInsights();
 }
 

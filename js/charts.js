@@ -91,27 +91,91 @@ function renderBarChart() {
   if (charts.bar) charts.bar.destroy();
   const { grid } = gc();
 
+  const makeGrad = c => {
+    const color = PAL[c.name] || c.color || '#888';
+    const g = ctx.createLinearGradient(0, 0, 0, 230);
+    g.addColorStop(0, color + 'f2');
+    g.addColorStop(.65, color + 'aa');
+    g.addColorStop(1, color + '66');
+    return g;
+  };
+
   charts.bar = new Chart(ctx, {
-    type: 'bar',
     data: {
       labels: d.map(x => x.month),
-      datasets: categories.map(c => ({
-        label: c.name,
-        data: d.map(x => (x.categories || {})[c.name] || 0),
-        backgroundColor: (PAL[c.name] || '#888') + 'cc',
-        borderRadius: 3,
-      })),
+      datasets: [
+        ...categories.map((c, i) => ({
+          type: 'bar',
+          label: c.name,
+          data: d.map(x => (x.categories || {})[c.name] || 0),
+          backgroundColor: makeGrad(c),
+          borderColor: (PAL[c.name] || c.color || '#888') + 'f5',
+          borderWidth: { top: i === categories.length - 1 ? 1 : 0 },
+          borderRadius: i === categories.length - 1 ? { topLeft: 9, topRight: 9 } : 0,
+          borderSkipped: false,
+          barPercentage: .72,
+          categoryPercentage: .78,
+          stack: 'assets',
+          order: 2,
+        })),
+        {
+          type: 'line',
+          label: '総資産ライン',
+          data: d.map(x => x.total),
+          borderColor: '#f5dfa0',
+          backgroundColor: 'rgba(245,223,160,.12)',
+          borderWidth: 2,
+          pointRadius: d.map((_, i) => i === d.length - 1 ? 5 : 2.5),
+          pointHoverRadius: 7,
+          pointBackgroundColor: '#07080e',
+          pointBorderColor: '#f5dfa0',
+          pointBorderWidth: 2,
+          tension: .38,
+          fill: false,
+          order: 1,
+        },
+      ],
     },
     options: {
       responsive: true,
+      maintainAspectRatio: false,
+      interaction: { mode: 'index', intersect: false },
       plugins: {
-        legend: { labels: { color: '#3e4560', font: { size: 9 } } },
-        tooltip: { ...tooltipDefaults, padding: 10,
-          callbacks: { label: c => `${c.dataset.label}: ${fmt(c.raw)}` } },
+        legend: {
+          position: 'top',
+          align: 'end',
+          labels: {
+            color: '#8b92a8',
+            font: { size: 10, family: 'JetBrains Mono' },
+            boxWidth: 26,
+            boxHeight: 8,
+            padding: 14,
+            useBorderRadius: true,
+            borderRadius: 6,
+          },
+        },
+        tooltip: { ...tooltipDefaults, padding: 12, displayColors: true,
+          callbacks: {
+            title: items => `${items[0].label} の内訳`,
+            label: c => `${c.dataset.label}: ${fmt(c.raw)}`,
+            footer: items => {
+              const sum = items.filter(i => i.dataset.type === 'bar').reduce((a, i) => a + i.raw, 0);
+              return '合計: ' + fmt(sum);
+            },
+          } },
       },
       scales: {
-        x: { stacked: true, grid: { color: grid }, ticks: { color: '#3e4560', font: { size: 8 } } },
-        y: { stacked: true, grid: { color: grid }, ticks: { color: '#3e4560', font: { size: 8 }, callback: v => fmtS(v) } },
+        x: {
+          stacked: true,
+          grid: { color: 'rgba(255,255,255,.025)', drawBorder: false },
+          ticks: { color: '#59617c', font: { size: 9, family: 'JetBrains Mono' }, maxRotation: 0 },
+        },
+        y: {
+          stacked: true,
+          grid: { color: grid, drawBorder: false },
+          border: { display: false },
+          ticks: { color: '#59617c', font: { size: 9, family: 'JetBrains Mono' }, callback: v => fmtS(v) },
+        },
       },
       onClick: (e, els) => { if (els.length) showMonthDetail(d[els[0].index]); },
     },

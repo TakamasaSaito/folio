@@ -193,7 +193,14 @@ Exifの撮影日時から月（YYYY-MM形式）を特定してください。
       <div class="card"><div class="c-ttl">総資産推移</div><div class="c-sub">Total Assets · タップで月次詳細</div><canvas id="lineChart" height="200"></canvas></div>
       <div class="card"><div class="c-ttl">資産配分</div><div class="c-sub">Latest Allocation</div><canvas id="donutChart" height="200"></canvas></div>
     </div>
-    <div class="card"><div class="c-ttl">カテゴリ別推移</div><div class="c-sub">Monthly Breakdown</div><canvas id="barChart" height="160"></canvas></div>
+    <div class="card cat-trend-card">
+      <div class="cat-trend-head">
+        <div><div class="c-ttl">カテゴリ別推移</div><div class="c-sub">Monthly Breakdown · Composition Flow</div></div>
+        <div class="cat-trend-total" id="catTrendTotal"></div>
+      </div>
+      <div class="cat-trend-highlights" id="catTrendHighlights"></div>
+      <div class="cat-chart-wrap"><canvas id="barChart" height="210"></canvas></div>
+    </div>
     <div class="card">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;">
         <div><div class="c-ttl">月次データ</div><div class="c-sub" style="margin-bottom:0;">History</div></div>
