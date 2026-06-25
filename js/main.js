@@ -28,7 +28,7 @@ function navTo(n) {
   if (n === 'settings') { renderCatList(); updateApiStatus(); }
   if (n === 'report') {
     const w = document.getElementById('rptApiWarn');
-    if (w) w.style.display = apiKey ? 'none' : 'block';
+    if (w) w.style.display = apiKey ? 'none' : 'flex';
   }
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
@@ -46,32 +46,17 @@ window.addEventListener('load', () => {
     s.classList.add('out');
     setTimeout(() => {
       s.style.display = 'none';
-      if (!apiKey) {
-        document.getElementById('apiSetup').style.display = 'flex';
-      } else {
-        enterApp();
-      }
+      enterApp();
     }, 600);
   }, 2400);
 });
 
 function enterApp() {
-  document.getElementById('apiSetup').style.display = 'none';
   document.getElementById('app').classList.add('show');
   renderDashboard();
 }
 
-/* ===== APIキー ===== */
-function saveApiKey() {
-  const v = document.getElementById('apiKeySetupInp').value.trim();
-  if (!v) { toast('APIキーを入力してください', 'error'); return; }
-  apiKey = v;
-  localStorage.setItem('folio_key', v);
-  toast('APIキーを保存しました ✓', 'success');
-  enterApp();
-}
-function skipApiKey() { apiKey = ''; enterApp(); }
-
+/* ===== APIキー (AIレポート用・任意) ===== */
 function openApiKeyModal() {
   document.getElementById('apiKeyModalInp').value = apiKey || '';
   updateApiDotModal();
@@ -84,6 +69,8 @@ function saveApiKeyModal() {
   else   localStorage.removeItem('folio_key');
   document.getElementById('apiKeyModal').classList.add('hide');
   updateApiStatus();
+  const w = document.getElementById('rptApiWarn');
+  if (w) w.style.display = v ? 'none' : 'flex';
   toast(v ? 'APIキーを保存しました ✓' : 'APIキーを削除しました', 'success');
 }
 function clearApiKey() {
@@ -93,176 +80,77 @@ function clearApiKey() {
   updateApiDotModal();
 }
 
-/* ===== ファイルアップロード ===== */
+/* ===== JSON インポート ===== */
 document.addEventListener('DOMContentLoaded', () => {
-  document.getElementById('fileInput').addEventListener('change', e => {
-    handleFiles(Array.from(e.target.files));
-    e.target.value = '';
+  const zone = document.getElementById('importZone');
+  if (!zone) return;
+  zone.addEventListener('dragover', e => {
+    e.preventDefault();
+    zone.classList.add('drag-over');
+  });
+  zone.addEventListener('dragleave', () => zone.classList.remove('drag-over'));
+  zone.addEventListener('drop', e => {
+    e.preventDefault();
+    zone.classList.remove('drag-over');
+    const file = e.dataTransfer.files[0];
+    if (file) handleJsonImport(file);
+    else toast('ファイルを選択してください', 'error');
   });
 });
 
-function handleFiles(files) {
-  files.forEach(f => {
-    const r = new FileReader();
-    r.onload = e => {
-      pendingFiles.push({ file: f, dataUrl: e.target.result });
-      renderThumbs();
-      document.getElementById('analyzeBtn').disabled = false;
-    };
-    r.readAsDataURL(f);
-  });
-}
-function renderThumbs() {
-  const l = document.getElementById('thumbList');
-  l.innerHTML = '';
-  pendingFiles.forEach((p, i) => {
-    const d = document.createElement('div');
-    d.className = 'thumb';
-    d.innerHTML = `<img src="${p.dataUrl}"><button class="thumb-x" onclick="removeThumb(${i})">×</button>`;
-    l.appendChild(d);
-  });
-  document.getElementById('ucBadge').textContent = pendingFiles.length ? pendingFiles.length + '枚' : 'AI';
-}
-function removeThumb(i) {
-  pendingFiles.splice(i, 1);
-  renderThumbs();
-  if (!pendingFiles.length) document.getElementById('analyzeBtn').disabled = true;
-}
-
-/* ===== 解析オーバーレイ ===== */
-const AO_LINES = [
-  '> Initializing Gemini Vision API...',
-  '> Processing image data...',
-  '> Running OCR pipeline...',
-  '> Extracting portfolio values...',
-  '> Parsing date metadata...',
-  '> Categorizing assets...',
-  '> Validating data...',
-  '> Analysis complete ✓',
-];
-let aoTimer = null;
-
-function showAoOverlay(total) {
-  const el = document.getElementById('aoOverlay');
-  el.style.display = 'flex';
-  document.getElementById('aoBar').style.width = '0%';
-  document.getElementById('aoLog').innerHTML = '';
-  document.getElementById('aoCount').textContent = total + ' image' + (total > 1 ? 's' : '') + ' queued';
-  let i = 0;
-  aoTimer = setInterval(() => {
-    if (i >= AO_LINES.length) { clearInterval(aoTimer); return; }
-    const log = document.getElementById('aoLog');
-    const d = document.createElement('div');
-    d.style.cssText = 'opacity:0;transform:translateY(4px);transition:all .2s;';
-    d.textContent = AO_LINES[i++];
-    log.appendChild(d);
-    requestAnimationFrame(() => requestAnimationFrame(() => { d.style.opacity = '1'; d.style.transform = 'none'; }));
-    log.scrollTop = log.scrollHeight;
-  }, 300);
-}
-function addAoLog(text, color) {
-  const log = document.getElementById('aoLog');
-  const d = document.createElement('div');
-  d.style.cssText = `color:${color || '#8b92a8'};opacity:0;transition:opacity .2s;`;
-  d.textContent = text;
-  log.appendChild(d);
-  requestAnimationFrame(() => requestAnimationFrame(() => d.style.opacity = '1'));
-  log.scrollTop = log.scrollHeight;
-}
-function hideAoOverlay(count) {
-  clearInterval(aoTimer);
-  document.getElementById('aoBar').style.width = '100%';
-  setTimeout(() => {
-    document.getElementById('aoOverlay').style.display = 'none';
-    showSucOverlay(count);
-  }, 500);
-}
-function showSucOverlay(count) {
-  const el = document.getElementById('sucOverlay');
-  el.style.display = 'flex';
-  document.getElementById('soSub').textContent = count + ' MONTH' + (count > 1 ? 'S' : '') + ' RECORDED';
-  setTimeout(() => {
-    el.style.opacity = '0';
-    el.style.transition = 'opacity .5s';
-    setTimeout(() => { el.style.display = 'none'; el.style.opacity = '1'; el.style.transition = ''; }, 500);
-  }, 1600);
-}
-
-/* ===== Gemini 解析フロー ===== */
-async function startAnalysis() {
-  if (!pendingFiles.length) return;
-  if (!apiKey) { toast('APIキーを設定してください', 'error', 4000); navTo('settings'); return; }
-  document.getElementById('analyzeBtn').disabled = true;
-  const tot = pendingFiles.length;
-  let done = 0;
-  const results = [];
-  showAoOverlay(tot);
-
-  for (const pf of pendingFiles) {
-    done++;
-    document.getElementById('aoBar').style.width  = Math.round((done / tot) * 85 + 5) + '%';
-    document.getElementById('aoSub').textContent  = `PROCESSING ${done}/${tot}...`;
+function handleJsonImport(file) {
+  if (!file) return;
+  const r = new FileReader();
+  r.onload = e => {
     try {
-      const res = await callGeminiVision(pf.dataUrl.split(',')[1], pf.file.type || 'image/jpeg');
-      if (res.month) {
-        addAoLog(`✓ ${res.month}: ${res.total ? res.total.toLocaleString() : '?'}円`, '#2dd4a0');
-        results.push(res);
-      } else {
-        addAoLog('⚠ 日付読み取り失敗 - スキップ', '#f5a623');
+      const raw = JSON.parse(e.target.result);
+      if (!raw.allData || !Array.isArray(raw.allData)) throw new Error('allData が見つかりません');
+      let added = 0;
+      raw.allData.forEach(d => {
+        if (d.month && d.total > 0) {
+          allData = allData.filter(x => x.month !== d.month);
+          allData.push(d);
+          added++;
+        }
+      });
+      allData.sort((a, b) => a.month.localeCompare(b.month));
+      if (raw.categories && raw.categories.length) categories = raw.categories;
+      if (raw.goal) {
+        goal = raw.goal;
+        try { localStorage.setItem('folio_goal', JSON.stringify(goal)); } catch (_) {}
       }
-    } catch (e) {
-      hideAoOverlay(0);
-      toast('エラー: ' + e.message, 'error', 5000);
-      document.getElementById('analyzeBtn').disabled = false;
-      return;
+      saveData();
+      saveSettings();
+      renderDashboard();
+      toast(added + '件追加しました ✓', 'success');
+      setTimeout(() => navTo('dash'), 500);
+    } catch (err) {
+      toast('エラー: ' + err.message, 'error');
     }
+  };
+  r.readAsText(file);
+}
+
+/* ===== プロンプトコピー ===== */
+function copyPrompt() {
+  const text = document.getElementById('promptText').textContent;
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(text.trim())
+      .then(() => toast('プロンプトをコピーしました ✓', 'success'))
+      .catch(() => fallbackCopy(text));
+  } else {
+    fallbackCopy(text);
   }
-  pendingFiles = [];
-  renderThumbs();
-  hideAoOverlay(results.length);
-  if (!results.length) { toast('データを読み取れませんでした', 'error'); return; }
-  setTimeout(() => openConfirmModal(results), 1800);
 }
-
-/* ===== 解析確認モーダル ===== */
-function openConfirmModal(results) {
-  confirmResults = results.map(r => JSON.parse(JSON.stringify(r)));
-  const PAL = pal();
-  document.getElementById('confirmList').innerHTML = confirmResults.map((r, ri) =>
-    `<div class="conf-card">
-       <div class="conf-tag">📅 ${r.month || '日付不明'}</div>
-       <div class="conf-fld">
-         <div class="conf-lbl">年月 (YYYY-MM)</div>
-         <input class="conf-inp" type="month" value="${r.month || ''}" onchange="confirmResults[${ri}].month=this.value">
-       </div>
-       <div class="conf-fld">
-         <div class="conf-lbl">総資産額（円）</div>
-         <input class="conf-inp" type="number" value="${r.total || 0}" onchange="confirmResults[${ri}].total=parseFloat(this.value)||0">
-       </div>
-       <div class="conf-cats">
-         ${categories.map(c =>
-           `<div class="conf-cat-fld">
-              <div class="conf-cat-lbl"><div class="c-dot" style="background:${PAL[c.name]||'#888'}"></div>${c.name}</div>
-              <input class="conf-inp" type="number" value="${(r.categories||{})[c.name]||0}"
-                onchange="confirmResults[${ri}].categories=confirmResults[${ri}].categories||{};confirmResults[${ri}].categories['${c.name}']=parseFloat(this.value)||0">
-            </div>`
-         ).join('')}
-       </div>
-     </div>`
-  ).join('');
-  document.getElementById('confirmModal').classList.remove('hide');
-}
-
-function confirmSave() {
-  const valid = confirmResults.filter(r => r.month && r.total > 0);
-  if (!valid.length) { toast('有効なデータがありません', 'error'); return; }
-  valid.forEach(r => { allData = allData.filter(d => d.month !== r.month); allData.push(r); });
-  allData.sort((a, b) => a.month.localeCompare(b.month));
-  saveData();
-  document.getElementById('confirmModal').classList.add('hide');
-  toast(valid.length + '件を保存しました ✓', 'success');
-  renderDashboard();
-  setTimeout(() => navTo('dash'), 600);
+function fallbackCopy(text) {
+  const ta = document.createElement('textarea');
+  ta.value = text.trim();
+  ta.style.cssText = 'position:fixed;opacity:0;';
+  document.body.appendChild(ta);
+  ta.select();
+  document.execCommand('copy');
+  document.body.removeChild(ta);
+  toast('プロンプトをコピーしました ✓', 'success');
 }
 
 /* ===== 手動入力モーダル ===== */

@@ -1,8 +1,6 @@
 /* ===== グローバル状態 ===== */
 let allData = [];
 let charts = {};
-let pendingFiles = [];
-let confirmResults = [];
 let manualEditIdx = null;
 let activePeriod = 0;
 let colorPickIdx = -1;

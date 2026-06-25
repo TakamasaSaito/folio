@@ -138,8 +138,6 @@ function exportCSV() {
 function clearAll() {
   if (!confirm('全データをリセットしますか？')) return;
   allData = [];
-  pendingFiles = [];
-  renderThumbs();
   Object.values(charts).forEach(c => { if (c) c.destroy(); });
   charts = {};
   if (sparkChart) { sparkChart.destroy(); sparkChart = null; }

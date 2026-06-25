@@ -27,28 +27,6 @@
   <div class="spl-bar"><div class="spl-prog"></div></div>
 </div>
 
-<!-- API SETUP -->
-<div id="apiSetup">
-  <div class="sc-card">
-    <div class="sc-icon">🔑</div>
-    <div class="sc-ttl2">Gemini API キー</div>
-    <div class="sc-sub">スクリーンショットのAI解析に<br>Gemini APIを使用します。</div>
-    <div class="sc-feats">
-      <div class="sc-feat"><div class="sc-feat-ico">🤖</div>画像から金額・日付を自動抽出</div>
-      <div class="sc-feat"><div class="sc-feat-ico">📊</div>AIレポート・配分アドバイス生成</div>
-      <div class="sc-feat"><div class="sc-feat-ico">🔒</div>キーは端末内のみに保存（サーバー送信なし）</div>
-    </div>
-    <div class="f-lbl">APIキーを入力</div>
-    <input class="f-inp" type="password" id="apiKeySetupInp" placeholder="AIzaSy...">
-    <div class="f-hint">
-      無料で取得: <a href="https://aistudio.google.com/app/apikey" target="_blank">aistudio.google.com</a><br>
-      Gemini 1.5 Flash（無料枠: 15回/分 / 1500回/日）を使用します
-    </div>
-    <button class="btn-gold" onclick="saveApiKey()">設定して開始する</button>
-    <button class="btn-skip" onclick="skipApiKey()">スキップ（手動入力のみで使用）</button>
-  </div>
-</div>
-
 <!-- APP -->
 <div id="app">
   <div class="topbar">
@@ -125,35 +103,66 @@
           <circle cx="152" cy="12" r="4" fill="rgba(201,168,76,.3)"/>
         </svg>
         <div class="empty-ttl">資産データなし</div>
-        <div class="empty-sub">スクリーンショットを追加すると<br>Gemini AIが金額・日付を自動で読み取ります</div>
-        <button class="empty-cta" onclick="document.getElementById('fileInput').click()">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="17" height="17"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21,15 16,10 5,21"/></svg>
-          スクリーンショットを追加
+        <div class="empty-sub">ChatGPTにスクショを渡してJSONを生成し<br>インポートするだけで記録できます</div>
+        <button class="empty-cta" onclick="document.getElementById('jsonImportInput').click()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="17" height="17"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><polyline points="9 15 12 12 15 15"/></svg>
+          JSONをインポート
         </button>
       </div>
     </div>
     <div>
       <div class="add-lbl">データを追加</div>
-      <div class="upload-card" onclick="document.getElementById('fileInput').click()">
-        <input type="file" id="fileInput" accept="image/*" multiple style="display:none;">
-        <div class="uc-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="#c9a84c" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="21" height="21"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21,15 16,10 5,21"/></svg>
+      <input type="file" id="jsonImportInput" accept=".json" style="display:none;" onchange="handleJsonImport(this.files[0]);this.value='';">
+      <div class="import-zone" id="importZone" onclick="document.getElementById('jsonImportInput').click()">
+        <div class="iz-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#c9a84c" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="22" height="22"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><polyline points="9 15 12 12 15 15"/></svg>
         </div>
-        <div style="flex:1;"><div class="uc-ttl">スクリーンショットを追加</div><div class="uc-sub">複数枚対応 · Gemini AIが自動解析</div></div>
-        <div class="uc-badge" id="ucBadge">AI</div>
+        <div class="iz-body">
+          <div class="iz-ttl">JSONをインポート</div>
+          <div class="iz-sub">クリックまたはドラッグ＆ドロップ</div>
+        </div>
+        <div class="iz-badge">JSON</div>
       </div>
-      <div class="thumb-row" id="thumbList"></div>
-      <div class="act-row">
-        <button class="btn-p" id="analyzeBtn" onclick="startAnalysis()" disabled>
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="15" height="15"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-          Gemini で解析
-        </button>
-        <button class="btn-s" onclick="openManualModal(null)">
+      <div style="display:flex;gap:8px;margin-bottom:14px;">
+        <button class="btn-s" style="flex:1;" onclick="openManualModal(null)">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>手動入力
         </button>
         <button class="btn-g" onclick="loadSample()">サンプル</button>
       </div>
-      <div class="prv-bar">🔒 端末内のみ &nbsp;·&nbsp; 🚫 広告なし &nbsp;·&nbsp; 🤖 Gemini AI</div>
+      <div class="prompt-panel">
+        <div class="pp-head">
+          <div>
+            <div class="pp-eye">CHATGPT</div>
+            <div class="pp-ttl">変換プロンプト</div>
+          </div>
+          <button class="pp-copy-btn" onclick="copyPrompt()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="12" height="12"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+            コピー
+          </button>
+        </div>
+        <div class="pp-body" id="promptText">以下のスクリーンショットをFOLIO用JSONに変換してください。
+Exifの撮影日時から月（YYYY-MM形式）を特定してください。
+
+出力形式（このJSONのみ出力・説明文不要）:
+{
+  "version": 1,
+  "allData": [
+    {
+      "month": "YYYY-MM",
+      "total": 数値（円・数字のみ）,
+      "categories": {
+        "株式": 数値,
+        "投資信託": 数値,
+        "現金・預金": 数値,
+        "その他": 数値
+      },
+      "note": "アプリ名"
+    }
+  ]
+}
+
+複数枚ある場合はallDataの配列に追加してください。</div>
+      </div>
     </div>
     <div id="quickNav" style="display:none;margin-top:14px;">
       <div class="add-lbl">分析メニュー</div>
@@ -227,7 +236,10 @@
     <div class="s-eye">AI Analysis</div><div class="s-ttl">AI レポート</div>
     <div class="card">
       <div class="c-ttl">総合レポート</div><div class="c-sub">Comprehensive Analysis by Gemini</div>
-      <div class="api-warn" id="rptApiWarn">⚠ APIキーが未設定です。設定画面から入力してください。</div>
+      <div class="api-warn" id="rptApiWarn" style="display:none;align-items:center;justify-content:space-between;">
+        <span>⚠ APIキーが未設定です</span>
+        <button onclick="openApiKeyModal()" style="background:none;border:1px solid rgba(240,92,110,.4);color:var(--ruby);font-size:11px;border-radius:6px;padding:4px 10px;cursor:pointer;font-family:'Noto Sans JP',sans-serif;white-space:nowrap;flex-shrink:0;">キーを設定する</button>
+      </div>
       <button class="btn-gen" id="reportBtn" onclick="generateReport()">✦ AI レポートを生成する</button>
       <div class="rpt-wrap"><div class="rpt-txt ph" id="reportBody">← ボタンを押すとGeminiが詳細レポートを生成します</div></div>
     </div>
@@ -265,16 +277,7 @@
       <div class="stg-ttl">設定</div>
       <div style="width:56px;"></div>
     </div>
-    <div class="add-lbl">Gemini API</div>
-    <div class="api-status-bar"><div class="api-dot ng" id="apiDotStg"></div><span id="apiStatusStg">未設定 - AIレポート・スクショ解析が使えません</span></div>
-    <div class="stg-grp">
-      <div class="s-row" onclick="openApiKeyModal()">
-        <div class="s-row-ico" style="background:rgba(201,168,76,.08);">🔑</div>
-        <div class="s-row-body"><div class="s-row-ttl">APIキーを設定・変更</div><div class="s-row-sub" id="apiKeyStgSub">未設定</div></div>
-        <div class="s-row-end">›</div>
-      </div>
-    </div>
-    <div class="add-lbl" style="margin-top:14px;">カテゴリ管理</div>
+    <div class="add-lbl">カテゴリ管理</div>
     <div id="catListEl"></div>
     <button class="btn-add-cat" onclick="addCat()">＋ カテゴリを追加</button>
     <div class="add-lbl" style="margin-top:16px;">目標設定</div>
@@ -326,19 +329,6 @@
   <div class="modal-sheet" id="monthSheet"></div>
 </div>
 
-<div class="modal-bg hide" id="confirmModal">
-  <div class="modal-sheet">
-    <div class="m-hdr">
-      <div><div class="s-eye">Confirm</div><div class="m-ttl">解析結果を確認</div></div>
-      <button class="m-close" onclick="document.getElementById('confirmModal').classList.add('hide')">×</button>
-    </div>
-    <div class="m-scroll" id="confirmList"></div>
-    <div class="m-footer">
-      <button class="btn-s" style="flex:1;" onclick="document.getElementById('confirmModal').classList.add('hide')">キャンセル</button>
-      <button class="btn-p" style="flex:2;" onclick="confirmSave()">✓ 保存する</button>
-    </div>
-  </div>
-</div>
 
 <div class="modal-bg hide" id="manualModal">
   <div class="modal-sheet">
@@ -384,31 +374,6 @@
     <div class="color-grid" id="colorGrid"></div>
     <button class="btn-p" style="width:100%;" onclick="closeColorPick()">決定</button>
   </div>
-</div>
-
-<!-- ANALYSIS OVERLAY -->
-<div id="aoOverlay">
-  <div class="ao-ring">
-    <svg width="34" height="34" viewBox="0 0 24 24" fill="none">
-      <defs><linearGradient id="aog" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#f5dfa0"/><stop offset="100%" stop-color="#c9a84c"/></linearGradient></defs>
-      <circle cx="11" cy="11" r="8" stroke="url(#aog)" stroke-width="1.5"/>
-      <line x1="21" y1="21" x2="16.65" y2="16.65" stroke="url(#aog)" stroke-width="1.5" stroke-linecap="round"/>
-    </svg>
-  </div>
-  <div class="ao-ttl" id="aoTitle">AI解析中</div>
-  <div class="ao-sub" id="aoSub">GEMINI PROCESSING...</div>
-  <div class="ao-bar-wrap"><div class="ao-bar" id="aoBar"></div></div>
-  <div class="ao-log" id="aoLog"></div>
-  <div class="ao-count" id="aoCount"></div>
-</div>
-
-<!-- SUCCESS OVERLAY -->
-<div id="sucOverlay">
-  <div style="position:relative;display:flex;align-items:center;justify-content:center;width:96px;height:96px;">
-    <div class="so-ring"></div><div class="so-check">✓</div>
-  </div>
-  <div class="so-ttl" id="soTtl">解析完了</div>
-  <div class="so-sub" id="soSub">MONTHS RECORDED</div>
 </div>
 
 <!-- TOAST CONTAINER -->
